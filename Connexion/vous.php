@@ -49,11 +49,11 @@ if(isset($_POST["submit"])) {
 if(isset($_POST["submit_parcours"])) {
     $username = $_SESSION['username'];
     $titre = $conn->real_escape_string($_POST['titre']);
-    $parcours = $conn->real_escape_string($_POST['parcours']);
+    $description = $conn->real_escape_string($_POST['parcours']);
     $date_debut = $conn->real_escape_string($_POST['date_debut']);
     $date_fin = $conn->real_escape_string($_POST['date_fin']);
     
-    $sql_insert_parcours = "INSERT INTO parcours (username, titre, parcours, date_debut, date_fin) VALUES ('$username', '$titre', '$description', '$date_debut', '$date_fin')";
+    $sql_insert_parcours = "INSERT INTO parcours (username, titre, description, date_debut, date_fin) VALUES ('$username', '$titre', '$description', '$date_debut', '$date_fin')";
     if ($conn->query($sql_insert_parcours) === TRUE) {
         echo "Nouvelle étape de parcours ajoutée avec succès.";
     } else {
@@ -108,7 +108,7 @@ if(isset($_POST["submit_parcours"])) {
            // Formulaire pour ajouter ou modifier la description
 echo '<h2>Ajouter une description</h2>';
 echo '<form action="" method="post">';
-echo '<textarea name="description" placeholder="Ajouter une description..."></textarea><br>';
+echo '<textarea name="descriptionU" placeholder="Ajouter une description..."></textarea><br>';
 echo '<input type="submit" name="submit_description" value="Valider"><br>';
 echo '</form>';
 
@@ -121,7 +121,7 @@ if(isset($_POST['submit_description'])) {
     $user_id = $_SESSION['username']; // Assurez-vous d'avoir une variable de session contenant l'ID de l'utilisateur connecté
     
     // Met à jour la description de l'utilisateur dans la base de données
-    $sql = "UPDATE utilisateur SET description='$description' WHERE username='$user_id'";
+    $sql = "UPDATE utilisateur SET description='$descriptionU' WHERE username='$user_id'";
     
     if ($conn->query($sql) === TRUE) {
         echo "Description mise à jour avec succès.";
