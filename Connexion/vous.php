@@ -10,6 +10,41 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// Si le formulaire est soumis
+if(isset($_POST["submit"])) {
+    $username = $_SESSION['username'];
+    // Répertoire de destination pour les photos de profil
+    $target_dir = "uploads/";
+    // Chemin complet du fichier téléchargé
+    $target_file = $target_dir . basename($_FILES["photo"]["name"]);
+    // Extension du fichier
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    // Vérifier si le fichier est une image réelle
+    $check = getimagesize($_FILES["photo"]["tmp_name"]);
+    if($check !== false) {
+        // Vérifier la taille de l'image
+        if ($_FILES["photo"]["size"] > 500000) {
+            echo "Désolé, votre fichier est trop volumineux.";
+        } else {
+            // Déplacer le fichier téléchargé vers le répertoire de destination
+            if (move_uploaded_file($_FILES["photo"]["tmp_name"], $target_file)) {
+                // Mettre à jour le chemin de la photo de profil dans la base de données
+                $sql_update_photo = "UPDATE utilisateur SET photoProfil='$target_file' WHERE username='$username'";
+                if ($conn->query($sql_update_photo) === TRUE) {
+                    echo "La photo de profil a été mise à jour avec succès.";
+                } else {
+                    echo "Erreur lors de la mise à jour de la photo de profil: " . $conn->error;
+                }
+            } else {
+                echo "Désolé, une erreur s'est produite lors de l'envoi de votre fichier.";
+            }
+        }
+    } else {
+        echo "Le fichier n'est pas une image.";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -42,14 +77,16 @@ if ($conn->connect_error) {
         <?php
         if(isset($_SESSION['username'])) {
             $username = $_SESSION['username'];
-            // Requête SQL pour récupérer les informations de l'utilisateur
             $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
             $result_user = $conn->query($sql_user);
             if ($result_user->num_rows > 0) {
                 $row_user = $result_user->fetch_assoc();
-                // Affichage de la photo de profil de l'utilisateur
                 echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" style="width: 50px; height: auto; display: block; margin: 0 auto;">';
-                // Affichage du nom de l'utilisateur
+                // Formulaire pour uploader une nouvelle photo de profil
+                echo '<form action="" method="post" enctype="multipart/form-data">';
+                echo '<input type="file" name="photo" accept="image/*">';
+                echo '<input type="submit" name="submit" value="Valider">';
+                echo '</form>';
                 echo "<h1>" . $row_user['username'] . "</h1>";
             }
         }
