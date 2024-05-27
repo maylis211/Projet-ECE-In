@@ -11,7 +11,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Si le formulaire est soumis
+// Si le formulaire pour uploader une photo est soumis
 if(isset($_POST["submit"])) {
     $username = $_SESSION['username'];
     // Répertoire de destination pour les photos de profil
@@ -44,6 +44,22 @@ if(isset($_POST["submit"])) {
         echo "Le fichier n'est pas une image.";
     }
 }
+
+// Si le formulaire pour ajouter une étape de parcours est soumis
+if(isset($_POST["submit_parcours"])) {
+    $username = $_SESSION['username'];
+    $titre = $conn->real_escape_string($_POST['titre']);
+    $description = $conn->real_escape_string($_POST['description']);
+    $date_debut = $conn->real_escape_string($_POST['date_debut']);
+    $date_fin = $conn->real_escape_string($_POST['date_fin']);
+    
+    $sql_insert_parcours = "INSERT INTO parcours (username, titre, description, date_debut, date_fin) VALUES ('$username', '$titre', '$description', '$date_debut', '$date_fin')";
+    if ($conn->query($sql_insert_parcours) === TRUE) {
+        echo "Nouvelle étape de parcours ajoutée avec succès.";
+    } else {
+        echo "Erreur lors de l'ajout de l'étape de parcours: " . $conn->error;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -68,6 +84,37 @@ if(isset($_POST["submit"])) {
         }
         .user-profile h1 {
             margin-top: 20px; /* Ajouter de l'espace entre les éléments */
+        }
+        .timeline {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 10px;
+            list-style-type: none;
+            position: relative;
+        }
+        .timeline:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 20px;
+            width: 4px;
+            background: #ddd;
+        }
+        .timeline-item {
+            margin: 20px 0;
+            padding-left: 40px;
+            position: relative;
+        }
+        .timeline-item:before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ddd;
         }
     </style>
 </head>
@@ -103,7 +150,34 @@ if(isset($_POST["submit"])) {
             echo '<input type="file" name="photo" accept="image/*"><br>';
             echo '<input type="submit" name="submit" value="Valider"><br>';
             echo '</form>';
-            
+
+            // Formulaire pour ajouter une nouvelle étape de parcours
+            echo '<h2>Ajouter une étape de parcours</h2>';
+            echo '<form action="" method="post">';
+            echo '<input type="text" name="titre" placeholder="Titre" required><br>';
+            echo '<textarea name="description" placeholder="Description" required></textarea><br>';
+            echo '<input type="date" name="date_debut" required><br>';
+            echo '<input type="date" name="date_fin" required><br>';
+            echo '<input type="submit" name="submit_parcours" value="Ajouter"><br>';
+            echo '</form>';
+
+            // Récupérer et afficher la frise chronologique du parcours de l'utilisateur
+            $sql_parcours = "SELECT * FROM parcours WHERE username='$username' ORDER BY date_debut ASC";
+            $result_parcours = $conn->query($sql_parcours);
+            if ($result_parcours->num_rows > 0) {
+                echo "<h2>Parcours</h2>";
+                echo '<ul class="timeline">';
+                while($row_parcours = $result_parcours->fetch_assoc()) {
+                    echo '<li class="timeline-item">';
+                    echo '<h3>' . $row_parcours['titre'] . '</h3>';
+                    echo '<p>' . $row_parcours['description'] . '</p>';
+                    echo '<span>' . $row_parcours['date_debut'] . ' - ' . $row_parcours['date_fin'] . '</span>';
+                    echo '</li>';
+                }
+                echo '</ul>';
+            } else {
+                echo "<p>Aucun parcours disponible.</p>";
+            }
         }
     }
     ?>
