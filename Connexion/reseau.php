@@ -70,7 +70,7 @@ $conn->close();
         <div class="contacts">
             <?php foreach ($utilisateurs as $utilisateur): ?>
             <div class="contact-card">
-                <a href="vous.php?username=<?php echo $utilisateur['username']; ?>"> <!-- Ajout du lien autour de l'image -->
+                <a href="profil.php?username=<?php echo $utilisateur['username']; ?>"> <!-- Ajout du lien autour de l'image -->
                     <img src="<?php echo $utilisateur['photoProfil']; ?>" alt="<?php echo $utilisateur['username']; ?>" class="profile-pic">
                 </a> <!-- Fin du lien -->
                 <div class="contact-info">
