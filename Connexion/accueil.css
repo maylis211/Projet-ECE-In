@@ -13,6 +13,16 @@ header {
     justify-content: space-between;
     padding: 10px 20px;
 }
+.event-container {
+    display: flex;
+    align-items: center; /* Aligne les éléments verticalement */
+}
+
+.event-container label {
+    margin-right: 10px; /* Ajoute un espace entre le texte et la case à cocher */
+}
+
+    
 
 .event {
     text-align: center;
