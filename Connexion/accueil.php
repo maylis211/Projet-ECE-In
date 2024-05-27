@@ -1,11 +1,11 @@
 <?php
+//L'utilisateur est sur sa session
 session_start();
 // Connexion à la base de données
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "projet";
-
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
@@ -171,7 +171,9 @@ if ($result_events->num_rows > 0) {
                 if ($result_posts->num_rows > 0) {
                     while ($row_post = $result_posts->fetch_assoc()) {
                         echo "<div class='post'>";
+                        echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
                         echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
+                        echo "</a>";
                         echo "<div class='post-content'>";
                         echo "<h3>".$row_post['username']."</h3>";
                         echo "<p>".$row_post['content']."</p>";
