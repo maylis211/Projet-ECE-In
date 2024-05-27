@@ -16,8 +16,8 @@ if (isset($_GET['ami'])) {
     // Récupérer le nom d'utilisateur de l'ami à ajouter
     $ami = $_GET['ami'];
 
-    // Récupérer l'ID de l'utilisateur connecté
-    $user_id = $_SESSION['username']; // Assurez-vous d'avoir une variable de session contenant l'ID de l'utilisateur connecté
+    // Récupérer le nom d'utilisateur de l'utilisateur connecté
+    $user_id = $_SESSION['username']; // Assurez-vous d'avoir une variable de session contenant le nom d'utilisateur de l'utilisateur connecté
 
     // Mettre à jour la demande d'ami dans la table utilisateur
     $sql_update_demande = "UPDATE utilisateur SET demande_ami='$ami' WHERE username='$user_id'";
@@ -52,7 +52,7 @@ $conn->close();
 <body>
     <header>
         <div class="logo">
-        <a href=accueil.php><img src="logo.jpg" alt="Logo ECE In"></a>
+            <img src="logo.jpg" alt="Logo ECE In">
         </div>
         <nav>
             <ul>
