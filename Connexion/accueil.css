@@ -167,3 +167,25 @@ footer {
     width: 100%;
     bottom: 0;
 }
+
+.onglet {
+    padding: 8px 12px;
+    margin: 0 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s, border-bottom 0.3s;
+}
+
+.onglet:hover {
+    background-color: #05595a;
+}
+
+.ongletSelect {
+    font-weight: bold; /* Met en gras le texte de l'onglet */
+    color: #076d79; /* Change la couleur du texte de l'onglet */
+    border-bottom: 2px solid #076d79; /* Ajoute une bordure en bas de l'onglet */
+    background-color: #05595a; /* Ajoute un arrière-plan gris clair */
+    border-radius: 5px; /* Arrondit les coins de l'onglet */
+    padding: 8px 12px; /* Ajoute de l'espace à l'intérieur de l'onglet */
+    margin: 0 5px; /* Ajoute un espace entre les onglets */
+    transition: background-color 0.3s; /* Ajoute une transition fluide lors du survol */
+}

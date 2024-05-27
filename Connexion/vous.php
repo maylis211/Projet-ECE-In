@@ -21,8 +21,20 @@ if ($conn->connect_error) {
     <link rel="stylesheet" href="vous.css">
 </head>
 <body>
-    <header>
-        <h1>Profil Utilisateur</h1>
+<header>
+        <div class="logo">
+            <img src="logo.jpg" alt="Logo ECE In">
+        </div>
+        <nav>
+            <ul>
+                <li><div class="onglet"><a href="accueil.php">Accueil</a></div></li>
+                <li><div class="onglet"><a href="mon-reseau.html">Mon Réseau</a></div></li>
+                <li><div class="ongletSelect"><a href="vous.php">Vous</a></div></li>
+                <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
+                <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+            </ul>
+        </nav>
     </header>
 
     <section class="user-profile">
