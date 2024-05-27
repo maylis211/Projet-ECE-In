@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 27 mai 2024 à 08:15
+-- Généré le : lun. 27 mai 2024 à 10:17
 -- Version du serveur : 8.3.0
 -- Version de PHP : 8.2.18
 
@@ -34,6 +34,25 @@ CREATE TABLE IF NOT EXISTS `evenements` (
   `Date` date NOT NULL,
   `Image` text NOT NULL,
   `Description` text NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `formations`
+--
+
+DROP TABLE IF EXISTS `formations`;
+CREATE TABLE IF NOT EXISTS `formations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `utilisateur_id` int DEFAULT NULL,
+  `nom` varchar(255) DEFAULT NULL,
+  `date_debut` date DEFAULT NULL,
+  `date_fin` date DEFAULT NULL,
+  `lieu` varchar(255) DEFAULT NULL,
+  `description` text,
+  PRIMARY KEY (`id`),
+  KEY `utilisateur_id` (`utilisateur_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
