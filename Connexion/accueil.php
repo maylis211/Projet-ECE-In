@@ -64,7 +64,7 @@ if ($conn->connect_error) {
                     }
                     ?>
                     <form method="POST" action="">
-                        <textarea placeholder="Quoi de neuf, <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : ''; ?> ?"></textarea>
+                        <textarea placeholder="Quoi de neuf ?"></textarea>
                         <button type="submit" name="submit">Publier</button>
                     </form>
                 </section>

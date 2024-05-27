@@ -1,12 +1,27 @@
 <?php
 session_start();
 
-// Simulation de données de contacts pour l'exemple
-$contacts = array(
-    array("name" => "Alice Dupont", "description" => "Étudiante en master informatique.", "photo" => "alice.jpg"),
-    array("name" => "Bob Martin", "description" => "Enseignant en réseaux et télécommunications.", "photo" => "bob.jpg"),
-    array("name" => "Claire Lefevre", "description" => "Développeuse chez XYZ Entreprise.", "photo" => "claire.jpg")
-);
+// Connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "projet"; // Remplacez "projet" par le nom de votre base de données
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Récupération des utilisateurs pour affichage
+$sql = "SELECT username, description, photoProfil FROM utilisateur";
+$result = $conn->query($sql);
+$utilisateurs = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $utilisateurs[] = $row;
+    }
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -24,26 +39,26 @@ $contacts = array(
         </div>
         <nav>
             <ul>
-                <li><div class="onglet"><a href="accueil.php">Accueil</a></div></li>
-                <li><div class="ongletSelect"><a href="reseau.php">Mon Réseau</a></div></li>
-                <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
-                <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
-                <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
-                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+                <li><a href="accueil.php">Accueil</a></li>
+                <li><a href="reseau.php" class="selected">Mon Réseau</a></li>
+                <li><a href="vous.php">Vous</a></li>
+                <li><a href="notifications.html">Notifications</a></li>
+                <li><a href="messagerie.html">Messagerie</a></li>
+                <li><a href="emplois.html">Emplois</a></li>
             </ul>
         </nav>
     </header>
     <main>
         <h1>Mon Réseau</h1>
         <div class="contacts">
-            <?php foreach ($contacts as $contact): ?>
-                <div class="contact-card">
-                    <img src="<?php echo $contact['photo']; ?>" alt="<?php echo $contact['name']; ?>" class="profile-pic">
-                    <div class="contact-info">
-                        <h2><?php echo $contact['name']; ?></h2>
-                        <p><?php echo $contact['description']; ?></p>
-                    </div>
+            <?php foreach ($utilisateurs as $utilisateur): ?>
+            <div class="contact-card">
+                <img src="<?php echo $utilisateur['photoProfil']; ?>" alt="<?php echo $utilisateur['username']; ?>" class="profile-pic">
+                <div class="contact-info">
+                    <h2><?php echo $utilisateur['username']; ?></h2>
+                    <p><?php echo $utilisateur['description']; ?></p>
                 </div>
+            </div>
             <?php endforeach; ?>
         </div>
     </main>
