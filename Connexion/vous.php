@@ -49,11 +49,11 @@ if(isset($_POST["submit"])) {
 if(isset($_POST["submit_parcours"])) {
     $username = $_SESSION['username'];
     $titre = $conn->real_escape_string($_POST['titre']);
-    $description = $conn->real_escape_string($_POST['description']);
+    $parcours = $conn->real_escape_string($_POST['parcours']);
     $date_debut = $conn->real_escape_string($_POST['date_debut']);
     $date_fin = $conn->real_escape_string($_POST['date_fin']);
     
-    $sql_insert_parcours = "INSERT INTO parcours (username, titre, description, date_debut, date_fin) VALUES ('$username', '$titre', '$description', '$date_debut', '$date_fin')";
+    $sql_insert_parcours = "INSERT INTO parcours (username, titre, parcours, date_debut, date_fin) VALUES ('$username', '$titre', '$description', '$date_debut', '$date_fin')";
     if ($conn->query($sql_insert_parcours) === TRUE) {
         echo "Nouvelle étape de parcours ajoutée avec succès.";
     } else {
@@ -68,55 +68,7 @@ if(isset($_POST["submit_parcours"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Utilisateur</title>
     <link rel="stylesheet" href="vous.css">
-    <style>
-        .profile-pic {
-            width: 150px; /* Taille de la photo augmentée */
-            height: 150px; /* Taille de la photo augmentée */
-            border-radius: 50%; /* Rendre la photo ronde */
-            display: block;
-            margin: 0 auto;
-        }
-        .user-profile {
-            text-align: center; /* Centrer les éléments */
-        }
-        .user-profile form {
-            margin-top: 20px; /* Ajouter de l'espace entre les éléments */
-        }
-        .user-profile h1 {
-            margin-top: 20px; /* Ajouter de l'espace entre les éléments */
-        }
-        .timeline {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 10px;
-            list-style-type: none;
-            position: relative;
-        }
-        .timeline:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 20px;
-            width: 4px;
-            background: #ddd;
-        }
-        .timeline-item {
-            margin: 20px 0;
-            padding-left: 40px;
-            position: relative;
-        }
-        .timeline-item:before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #ddd;
-        }
-    </style>
+
 </head>
 <body>
 <header>
@@ -137,6 +89,8 @@ if(isset($_POST["submit_parcours"])) {
 
 <section class="user-profile">
     <?php
+
+    
     if(isset($_SESSION['username'])) {
         $username = $_SESSION['username'];
         $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
@@ -151,11 +105,38 @@ if(isset($_POST["submit_parcours"])) {
             echo '<input type="submit" name="submit" value="Valider"><br>';
             echo '</form>';
 
+           // Formulaire pour ajouter ou modifier la description
+echo '<h2>Ajouter une description</h2>';
+echo '<form action="" method="post">';
+echo '<textarea name="description" placeholder="Ajouter une description..."></textarea><br>';
+echo '<input type="submit" name="submit_description" value="Valider"><br>';
+echo '</form>';
+
+// Vérifie si le formulaire a été soumis
+if(isset($_POST['submit_description'])) {
+    // Récupère la description saisie par l'utilisateur
+    $description = $conn->real_escape_string($_POST['description']);
+    
+    // Récupère l'ID de l'utilisateur connecté
+    $user_id = $_SESSION['username']; // Assurez-vous d'avoir une variable de session contenant l'ID de l'utilisateur connecté
+    
+    // Met à jour la description de l'utilisateur dans la base de données
+    $sql = "UPDATE utilisateur SET description='$description' WHERE username='$user_id'";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "Description mise à jour avec succès.";
+    } else {
+        echo "Erreur lors de la mise à jour de la description: " . $conn->error;
+    }
+}
+
+           
+
             // Formulaire pour ajouter une nouvelle étape de parcours
             echo '<h2>Ajouter une étape de parcours</h2>';
             echo '<form action="" method="post">';
             echo '<input type="text" name="titre" placeholder="Titre" required><br>';
-            echo '<textarea name="description" placeholder="Description" required></textarea><br>';
+            echo '<textarea name="parcours" placeholder="Description du parcours" required></textarea><br>';
             echo '<input type="date" name="date_debut" required><br>';
             echo '<input type="date" name="date_fin" required><br>';
             echo '<input type="submit" name="submit_parcours" value="Ajouter"><br>';
