@@ -13,8 +13,17 @@ header {
     justify-content: space-between;
     padding: 10px 20px;
 }
+
+.event {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+}
 .profile-pic {
-    width: 20px; /* Définir la largeur souhaitée */
+    width: 5vw; /* Définir la largeur souhaitée */
     height: auto; /* Maintenir le rapport hauteur/largeur */
     border-radius: 50%; /* Rendre l'image ronde si nécessaire */
 }
