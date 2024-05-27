@@ -38,7 +38,14 @@ if ($conn->connect_error) {
     <main>
         <section class="presentation">
             <h1>Bienvenue sur ECE In</h1>
-            <p>Votre réseau social professionnel pour la communauté ECE Paris.</p>
+            <p>ECE In est un réseau social professionnel conçu pour les membres de la communauté ECE Paris. Que vous soyez étudiant de licence, master, doctorat, apprenti en entreprise, enseignant ou employé de l'école, ECE In est là pour vous aider à prendre votre vie professionnelle au sérieux.</p>
+            <p>Notre plateforme offre un espace où vous pouvez vous connecter avec d'autres professionnels, échanger des idées, rechercher des opportunités de carrière, et bien plus encore.</p>
+        </section>
+        <section class="event">
+            <h2>Évènement de la semaine</h2>
+            <p>Restez informé sur les événements importants de la semaine à l'ECE Paris.</p>
+            <p>Exemples d'événements : porte ouverte de l'école, séminaire, conférence, etc.</p>
+            <!-- Ajoutez les détails sur l'événement ici -->
         </section>
         <div class="main-content">
             <div class="left-content">
