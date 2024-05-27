@@ -19,7 +19,7 @@ if(isset($_POST["submit"])) {
     // Chemin complet du fichier téléchargé
     $target_file = $target_dir . basename($_FILES["photo"]["name"]);
     // Extension du fichier
-    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
     // Vérifier si le fichier est une image réelle
     $check = getimagesize($_FILES["photo"]["tmp_name"]);
     if($check !== false) {
@@ -44,9 +44,7 @@ if(isset($_POST["submit"])) {
         echo "Le fichier n'est pas une image.";
     }
 }
-
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -54,48 +52,66 @@ if(isset($_POST["submit"])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil Utilisateur</title>
     <link rel="stylesheet" href="vous.css">
+    <style>
+        .profile-pic {
+            width: 150px; /* Taille de la photo augmentée */
+            height: 150px; /* Taille de la photo augmentée */
+            border-radius: 50%; /* Rendre la photo ronde */
+            display: block;
+            margin: 0 auto;
+        }
+        .user-profile {
+            text-align: center; /* Centrer les éléments */
+        }
+        .user-profile form {
+            margin-top: 20px; /* Ajouter de l'espace entre les éléments */
+        }
+        .user-profile h1 {
+            margin-top: 20px; /* Ajouter de l'espace entre les éléments */
+        }
+    </style>
 </head>
 <body>
 <header>
-        <div class="logo">
-            <img src="logo.jpg" alt="Logo ECE In">
-        </div>
-        <nav>
-            <ul>
-                <li><div class="onglet"><a href="accueil.php">Accueil</a></div></li>
-                <li><div class="onglet"><a href="mon-reseau.html">Mon Réseau</a></div></li>
-                <li><div class="ongletSelect"><a href="vous.php">Vous</a></div></li>
-                <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
-                <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
-                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="logo">
+        <img src="logo.jpg" alt="Logo ECE In">
+    </div>
+    <nav>
+        <ul>
+            <li><div class="onglet"><a href="accueil.php">Accueil</a></div></li>
+            <li><div class="onglet"><a href="mon-reseau.html">Mon Réseau</a></div></li>
+            <li><div class="ongletSelect"><a href="vous.php">Vous</a></div></li>
+            <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
+            <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
+            <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+        </ul>
+    </nav>
+</header>
 
-    <section class="user-profile">
-        <h2>Profil de l'utilisateur</h2>
-        <?php
-        if(isset($_SESSION['username'])) {
-            $username = $_SESSION['username'];
-            $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
-            $result_user = $conn->query($sql_user);
-            if ($result_user->num_rows > 0) {
-                $row_user = $result_user->fetch_assoc();
-                echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" style="width: 50px; height: auto; display: block; margin: 0 auto;">';
-                // Formulaire pour uploader une nouvelle photo de profil
-                echo '<form action="" method="post" enctype="multipart/form-data">';
-                echo '<input type="file" name="photo" accept="image/*">';
-                echo '<input type="submit" name="submit" value="Valider">';
-                echo '</form>';
-                echo "<h1>" . $row_user['username'] . "</h1>";
-            }
+<section class="user-profile">
+    <?php
+    if(isset($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+        $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
+        $result_user = $conn->query($sql_user);
+        if ($result_user->num_rows > 0) {
+            $row_user = $result_user->fetch_assoc();
+            echo "<h1>" . $row_user['username'] . "</h1>";
+            echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
+            // Formulaire pour uploader une nouvelle photo de profil
+            echo '<form action="" method="post" enctype="multipart/form-data">';
+            echo '<input type="file" name="photo" accept="image/*"><br>';
+            echo '<input type="submit" name="submit" value="Valider"><br>';
+            echo '</form>';
+            
         }
-        ?>
-    </section>
+    }
+    ?>
+</section>
 
-    <footer>
-        <p>&copy; 2024 ECE In. Tous droits réservés.</p>
-    </footer>
+<footer>
+    <p>&copy; 2024 ECE In. Tous droits réservés.</p>
+</footer>
 </body>
 </html>
 
