@@ -10,6 +10,19 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
+// Si le formulaire de création de post est soumis
+if (isset($_POST['submit'])) {
+    $username = $_SESSION['username'];
+    $content = $conn->real_escape_string($_POST['content']);
+
+    $sql_insert_post = "INSERT INTO posts (username, content) VALUES ('$username', '$content')";
+    if ($conn->query($sql_insert_post) === TRUE) {
+        echo "Post créé avec succès.";
+    } else {
+        echo "Erreur lors de la création du post: " . $conn->error;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -18,11 +31,41 @@ if ($conn->connect_error) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - ECE In</title>
     <link rel="stylesheet" href="accueil.css">
+    <style>
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .create-post, .feed, .post {
+            margin: 20px auto;
+            max-width: 600px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+        .create-post img {
+            display: block;
+            margin: 0 auto 10px;
+        }
+        .post-content {
+            margin-left: 70px;
+        }
+        .post .profile-pic {
+            float: left;
+            margin-right: 10px;
+        }
+        .post .timestamp {
+            font-size: 0.8em;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="logo.jpg" alt="Logo ECE In">
+            <a href="accueil.php"><img src="logo.jpg" alt="Logo ECE In"></a>
         </div>
         <nav>
             <ul>
@@ -45,7 +88,6 @@ if ($conn->connect_error) {
             <h2>Évènement de la semaine</h2>
             <p>Restez informé sur les événements importants de la semaine à l'ECE Paris.</p>
             <p>Exemples d'événements : porte ouverte de l'école, séminaire, conférence, etc.</p>
-            <!-- Ajoutez les détails sur l'événement ici -->
         </section>
         <div class="main-content">
             <div class="left-content">
@@ -53,7 +95,7 @@ if ($conn->connect_error) {
                 <section class="create-post">
                     <h2>Créer un post</h2>
                     <?php
-                    if(isset($_SESSION['username'])) {
+                    if (isset($_SESSION['username'])) {
                         $username = $_SESSION['username'];
                         $sql = "SELECT photoProfil FROM utilisateur WHERE username='$username'";
                         $result = $conn->query($sql);
@@ -64,21 +106,32 @@ if ($conn->connect_error) {
                     }
                     ?>
                     <form method="POST" action="">
-                        <textarea placeholder="Quoi de neuf ?"></textarea>
+                        <textarea name="content" placeholder="Quoi de neuf ?" required></textarea>
                         <button type="submit" name="submit">Publier</button>
                     </form>
                 </section>
                 <!-- Feed de posts -->
                 <section class="feed">
                     <h2>Fil d'actualités</h2>
-                    <!-- Afficher les posts ici -->
-                    <div class="post">
-                        <p>Post 1: Contenu du post...</p>
-                    </div>
-                    <div class="post">
-                        <p>Post 2: Contenu du post...</p>
-                    </div>
-                    <!-- Ajoutez plus de posts ici -->
+                    <?php
+                    $sql_posts = "SELECT posts.content, posts.created_at, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username ORDER BY posts.created_at DESC";
+                    $result_posts = $conn->query($sql_posts);
+
+                    if ($result_posts->num_rows > 0) {
+                        while ($row_post = $result_posts->fetch_assoc()) {
+                            echo "<div class='post'>";
+                            echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
+                            echo "<div class='post-content'>";
+                            echo "<h3>".$row_post['username']."</h3>";
+                            echo "<p>".$row_post['content']."</p>";
+                            echo "<span class='timestamp'>".$row_post['created_at']."</span>";
+                            echo "</div>";
+                            echo "</div>";
+                        }
+                    } else {
+                        echo "<p>Aucun post disponible.</p>";
+                    }
+                    ?>
                 </section>
                 <section class="contact">
                 <h2>Nous contacter</h2>
@@ -90,7 +143,6 @@ if ($conn->connect_error) {
                 </ul>
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.816863599406!2d2.2914572156740104!3d48.83747107928404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e67161ec115303%3A0x20b44f189d292990!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1622003223999!5m2!1sen!2sus" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </section>
-
             </div>
         </div>
     </main>
