@@ -85,9 +85,11 @@ if ($result_events->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil - ECE In</title>
     <link rel="stylesheet" href="accueil.css">
-    <style>
-        
-    </style>
+    <script src="accueil.js"></script>
+    <!-- Liens vers les fichiers CSS de Slick Carousel -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css">
+
 </head>
 <body>
 <header>
@@ -104,6 +106,8 @@ if ($result_events->num_rows > 0) {
                 <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
             </ul>
         </nav>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     </header>
     <main>
         <section class="presentation">
@@ -114,23 +118,15 @@ if ($result_events->num_rows > 0) {
         <section class="event">
             <h2>Évènement de la semaine</h2>
             <p>Restez informé sur les événements importants de la semaine à l'ECE Paris.</p>
-                <?php
-                if (count($events) > 0) {
-                    foreach ($events as $event) {
-                        echo "<div class='event-item'>";
-                        // Affiche l'image de l'événement en utilisant le chemin stocké dans la base de données
-                        echo "<img src='" . $event['image'] . "' alt='Image de l'événement'>";
-                        echo "<p><strong>Événement :</strong> " . $event['content'] . "</p>";
-                        echo "<p><strong>Début :</strong> " . $event['date_debut'] . "</p>";
-                        echo "<p><strong>Fin :</strong> " . $event['date_fin'] . "</p>";
-                        echo "</div>";
-                    }
-                } else {
-                    echo "<p>Aucun événement prévu cette semaine.</p>";
-                }
-                ?>
+            <!-- Conteneur du carrousel -->
+            <div class="slick-carousel">
+                <div class="carousel-slide"><img src="uploads/image1.jpg" alt="Image 1" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
+                <div class="carousel-slide"><img src="uploads/image2.jpg" alt="Image 2" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
+                <div class="carousel-slide"><img src="uploads/image3.jpg" alt="Image 3" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
+                <!-- Ajoutez d'autres images ici selon vos besoins -->
             </div>
         </section>
+
         <div class="main-content">
             <div class="left-content">
             <section class="create-post">
@@ -222,6 +218,9 @@ if ($result_events->num_rows > 0) {
         </div>
     </div>
 </main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script src="accueil.js"></script>
 <?php
 $conn->close();
 ?>
