@@ -22,7 +22,7 @@ if ($conn->connect_error) {
 <body>
     <header>
         <div class="logo">
-            <img src="profil.jpg" alt="Logo ECE In">
+            <img src="logo.jpg" alt="Logo ECE In">
         </div>
         <nav>
             <ul>
@@ -59,7 +59,7 @@ if ($conn->connect_error) {
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                             $row = $result->fetch_assoc();
-                            echo '<div class="logo"><img src="'.$row['photoProfil'].'" alt="Photo de profil" style="width: 50px; height: auto;"></div>';
+                            echo "<img src='".$row['photoProfil']."' alt='Photo de profil'>";
                         }
                     }
                     ?>
