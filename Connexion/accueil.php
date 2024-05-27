@@ -15,6 +15,8 @@ if ($conn->connect_error) {
 if (isset($_POST['submit'])) {
     $username = $_SESSION['username'];
     $content = $conn->real_escape_string($_POST['content']);
+    $date_debut = NULL;
+    $date_fin = NULL;
     $is_event = isset($_POST['is_event']) ? 1 : 0; // Vérifie si la case à cocher est cochée
 
     $date_debut = $is_event ? $conn->real_escape_string($_POST['date_debut']) : NULL;
@@ -45,6 +47,21 @@ if (isset($_POST['submit'])) {
     }
 }
 
+// Si le formulaire de commentaire est soumis
+if (isset($_POST['submit_comment'])) {
+    $username = $_SESSION['username'];
+    $id = $_POST['id'];
+    $comment_content = $conn->real_escape_string($_POST['comment_content']);
+
+    // Insérer le commentaire dans la base de données
+    $sql_insert_comment = "INSERT INTO comments (id, username, content) VALUES ('$id', '$username', '$comment_content')";
+    if ($conn->query($sql_insert_comment) === TRUE) {
+        echo "Commentaire ajouté avec succès.";
+    } else {
+        echo "Erreur lors de l'ajout du commentaire: " . $conn->error;
+    }
+}
+
 // Obtenir la date de début et de fin de la semaine actuelle
 $start_week = date("Y-m-d", strtotime('monday this week'));
 $end_week = date("Y-m-d", strtotime('sunday this week'));
@@ -69,69 +86,11 @@ if ($result_events->num_rows > 0) {
     <title>Accueil - ECE In</title>
     <link rel="stylesheet" href="accueil.css">
     <style>
-        .profile-pic {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-        .create-post, .feed, .post, .event-list {
-            margin: 20px auto;
-            max-width: 600px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #f9f9f9;
-        }
-        .create-post img {
-            display: block;
-            margin: 0 auto 10px;
-        }
-        .post-content {
-            margin-left: 70px;
-        }
-        .post .profile-pic {
-            float: left;
-            margin-right: 10px;
-        }
-        .post .timestamp {
-            font-size: 0.8em;
-            color: #777;
-        }
+        
     </style>
-    <script>
-        // JavaScript pour le carrousel
-        const carouselSlide = document.querySelector('.carousel-slide');
-        const carouselItems = document.querySelectorAll('.carousel-item');
-        const prevBtn = document.querySelector('.carousel-prev');
-        const nextBtn = document.querySelector('.carousel-next');
-
-        let counter = 0;
-        const size = carouselItems[0].clientWidth;
-
-        prevBtn.addEventListener('click', () => {
-            counter--;
-            if (counter < 0) counter = carouselItems.length - 1;
-            updateCarousel();
-        });
-
-        nextBtn.addEventListener('click', () => {
-            counter++;
-            if (counter >= carouselItems.length) counter = 0;
-            updateCarousel();
-        });
-
-        function updateCarousel() {
-            carouselSlide.style.transform = `translateX(${-size * counter}px)`;
-        }
-        function toggleEventDates() {
-            var eventCheckbox = document.getElementById('is_event');
-            var dateFields = document.getElementById('date_fields');
-            dateFields.style.display = eventCheckbox.checked ? 'block' : 'none';
-        }
-    </script>
 </head>
 <body>
-    <header>
+<header>
         <div class="logo">
             <a href="accueil.php"><img src="logo.jpg" alt="Logo ECE In"></a>
         </div>
@@ -155,29 +114,26 @@ if ($result_events->num_rows > 0) {
         <section class="event">
             <h2>Évènement de la semaine</h2>
             <p>Restez informé sur les événements importants de la semaine à l'ECE Paris.</p>
-            <div class="event-list">
-            <?php
-if (count($events) > 0) {
-    foreach ($events as $event) {
-        echo "<div class='event-item'>";
-        // Affiche l'image de l'événement en utilisant le chemin stocké dans la base de données
-        echo "<img src='" . $event['image'] . "' alt='Image de l'événement'>";
-        echo "<p><strong>Événement :</strong> " . $event['content'] . "</p>";
-        echo "<p><strong>Début :</strong> " . $event['date_debut'] . "</p>";
-        echo "<p><strong>Fin :</strong> " . $event['date_fin'] . "</p>";
-        echo "</div>";
-    }
-} else {
-    echo "<p>Aucun événement prévu cette semaine.</p>";
-}
-?>
-
+                <?php
+                if (count($events) > 0) {
+                    foreach ($events as $event) {
+                        echo "<div class='event-item'>";
+                        // Affiche l'image de l'événement en utilisant le chemin stocké dans la base de données
+                        echo "<img src='" . $event['image'] . "' alt='Image de l'événement'>";
+                        echo "<p><strong>Événement :</strong> " . $event['content'] . "</p>";
+                        echo "<p><strong>Début :</strong> " . $event['date_debut'] . "</p>";
+                        echo "<p><strong>Fin :</strong> " . $event['date_fin'] . "</p>";
+                        echo "</div>";
+                    }
+                } else {
+                    echo "<p>Aucun événement prévu cette semaine.</p>";
+                }
+                ?>
             </div>
         </section>
         <div class="main-content">
             <div class="left-content">
-                <!-- Formulaire de création de post avec la photo de profil de l'utilisateur -->
-                <section class="create-post">
+            <section class="create-post">
                     <h2>Créer un post</h2>
                     <?php
                     if (isset($_SESSION['username'])) {
@@ -207,33 +163,53 @@ if (count($events) > 0) {
                         <button type="submit" name="submit">Publier</button>
                     </form>
                 </section>
-                <!-- Feed de posts -->
                 <section class="feed">
                     <h2>Fil d'actualités</h2>
                     <?php
-                    $sql_posts = "SELECT posts.content, posts.created_at, posts.image, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username ORDER BY posts.created_at DESC";
+                    $sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.image, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username ORDER BY posts.created_at DESC";
                     $result_posts = $conn->query($sql_posts);
-
-                    if ($result_posts->num_rows > 0) {
-                        while ($row_post = $result_posts->fetch_assoc()) {
-                            echo "<div class='post'>";
-                            echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
-                            echo "<div class='post-content'>";
-                            echo "<h3>".$row_post['username']."</h3>";
-                            echo "<p>".$row_post['content']."</p>";
-                            if (!empty($row_post['image'])) {
-                                echo "<img src='".$row_post['image']."' alt='Image du post' style='max-width:100%;'>";
-                            }
-                            echo "<span class='timestamp'>".$row_post['created_at']."</span>";
-                            echo "</div>";
-                            echo "</div>";
+                if ($result_posts->num_rows > 0) {
+                    while ($row_post = $result_posts->fetch_assoc()) {
+                        echo "<div class='post'>";
+                        echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
+                        echo "<div class='post-content'>";
+                        echo "<h3>".$row_post['username']."</h3>";
+                        echo "<p>".$row_post['content']."</p>";
+                        if (!empty($row_post['image'])) {
+                            echo "<img src='".$row_post['image']."' alt='Image du post' style='max-width:100%;'>";
                         }
-                    } else {
-                        echo "<p>Aucun post disponible.</p>";
+                        echo "<span class='timestamp'>".$row_post['created_at']."</span>";
+                        echo "<form method='POST' action=''>";
+                        echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
+                        echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
+                        echo "<button type='submit' name='submit_comment'>Commenter</button>";
+                        echo "</form>";
+
+                        // Afficher les commentaires
+                        $id = $row_post['id'];
+                        $sql_comments = "SELECT * FROM comments WHERE id = '$id' ORDER BY created_at DESC";
+                        $result_comments = $conn->query($sql_comments);
+
+                        if ($result_comments->num_rows > 0) {
+                            echo "<div class='comments'>";
+                            while ($row_comment = $result_comments->fetch_assoc()) {
+                                echo "<div class='comment'>";
+                                echo "<p><strong>".$row_comment['username'].":</strong> ".$row_comment['content']."</p>";
+                                echo "</div>";
+                            }
+                            echo "</div>";
+                        } else {
+                            echo "<p>Aucun commentaire.</p>";
+                        }
+                        echo "</div>"; // Fermeture de post-content
+                        echo "</div>"; // Fermeture de post
                     }
-                    ?>
-                </section>
-                <section class="contact">
+                } else {
+                    echo "<p>Aucun post disponible.</p>";
+                }
+                ?>
+            </section>
+            <section class="contact">
                 <h2>Nous contacter</h2>
                 <p>Vous pouvez nous contacter par les moyens suivants :</p>
                 <ul>
@@ -243,9 +219,9 @@ if (count($events) > 0) {
                 </ul>
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.816863599406!2d2.2914572156740104!3d48.83747107928404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e67161ec115303%3A0x20b44f189d292990!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1622003223999!" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
                 </section>
-            </div>
         </div>
-    </main>
+    </div>
+</main>
 <?php
 $conn->close();
 ?>
