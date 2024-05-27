@@ -115,7 +115,7 @@ echo '</form>';
 // Vérifie si le formulaire a été soumis
 if(isset($_POST['submit_description'])) {
     // Récupère la description saisie par l'utilisateur
-    $description = $conn->real_escape_string($_POST['description']);
+    $descriptionU = $conn->real_escape_string($_POST['descriptionU']);
     
     // Récupère l'ID de l'utilisateur connecté
     $user_id = $_SESSION['username']; // Assurez-vous d'avoir une variable de session contenant l'ID de l'utilisateur connecté
