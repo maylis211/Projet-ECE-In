@@ -26,12 +26,12 @@ if ($conn->connect_error) {
         </div>
         <nav>
             <ul>
-                <li><a href="index.html">Accueil</a></li>
-                <li><a href="mon-reseau.html">Mon Réseau</a></li>
-                <li><a href="vous.html">Vous</a></li>
-                <li><a href="notifications.html">Notifications</a></li>
-                <li><a href="messagerie.html">Messagerie</a></li>
-                <li><a href="emplois.html">Emplois</a></li>
+                <li><div class="ongletSelect"><a href="accueil.php">Accueil</a></div></li>
+                <li><div class="onglet"><a href="mon-reseau.html">Mon Réseau</a></div></li>
+                <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
+                <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
+                <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
             </ul>
         </nav>
     </header>
@@ -59,7 +59,7 @@ if ($conn->connect_error) {
                         $result = $conn->query($sql);
                         if ($result->num_rows > 0) {
                             $row = $result->fetch_assoc();
-                            echo "<img src='".$row['photoProfil']."' alt='Photo de profil'>";
+                            echo "<img src='".$row['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
                         }
                     }
                     ?>
