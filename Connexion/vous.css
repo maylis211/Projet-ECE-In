@@ -1,4 +1,4 @@
-/* Styles généraux */
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -137,3 +137,4 @@ button:hover {
     margin: 0 5px; /* Ajoute un espace entre les onglets */
     transition: background-color 0.3s; /* Ajoute une transition fluide lors du survol */
 }
+

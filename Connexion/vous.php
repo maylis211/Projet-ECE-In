@@ -250,12 +250,12 @@ if(isset($_POST["delete_cv"])) {
                 echo "<h2>Vos Posts</h2>";
                 while ($row_post = $result_posts->fetch_assoc()) {
                     echo "<div class='post'>";
-                    echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
                     echo "<div class='post-content'>";
                     echo "<h3>".$row_post['username']."</h3>";
                     echo "<p>".$row_post['content']."</p>";
                     if (!empty($row_post['image'])) {
-                        echo "<img src='".$row_post['image']."' alt='Image du post' style='max-width:100%;'>";
+                        echo "<img src='".$row_post['image']."' alt='Image du post' style='max-width:10%;'>";
+                        echo"<br>";
                     }
                     echo "<span class='timestamp'>".$row_post['created_at']."</span>";
                     // Ajoutez le formulaire pour supprimer le post
