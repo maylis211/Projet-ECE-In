@@ -126,7 +126,7 @@ if(isset($_POST["submit_parcours"])) {
     <nav>
         <ul>
             <li><div class="onglet"><a href="accueil.php">Accueil</a></div></li>
-            <li><div class="onglet"><a href="mon-reseau.html">Mon Réseau</a></div></li>
+            <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
             <li><div class="ongletSelect"><a href="vous.php">Vous</a></div></li>
             <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
             <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
