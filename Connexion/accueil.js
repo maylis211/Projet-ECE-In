@@ -28,3 +28,4 @@ document.addEventListener('DOMContentLoaded', () => {
         nextSlide();
     }, 3000);
 });
+
