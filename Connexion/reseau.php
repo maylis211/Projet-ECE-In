@@ -52,7 +52,7 @@ $conn->close();
 <body>
     <header>
         <div class="logo">
-            <img src="logo.jpg" alt="Logo ECE In">
+        <a href=accueil.php><img src="logo.jpg" alt="Logo ECE In"></a>
         </div>
         <nav>
             <ul>
