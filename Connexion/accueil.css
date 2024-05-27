@@ -14,7 +14,7 @@ header {
     padding: 10px 20px;
 }
 .profile-pic {
-    width: 50px; /* Définir la largeur souhaitée */
+    width: 20px; /* Définir la largeur souhaitée */
     height: auto; /* Maintenir le rapport hauteur/largeur */
     border-radius: 50%; /* Rendre l'image ronde si nécessaire */
 }
@@ -104,6 +104,57 @@ main {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.contact {
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    margin-top: 20px;
+    width: 80%; /* Ajustez la largeur selon vos besoins */
+    margin: 0 auto; /* Utiliser cette propriété pour centrer horizontalement */
+    max-width: 800px; /* Ajouter une largeur maximale pour éviter que la section ne s'étire trop sur de grands écrans */
+}
+
+
+.contact h2 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.contact p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+.contact ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.contact ul li {
+    color: #444;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.contact ul li a {
+    color: #007bff; 
+    text-decoration: none;
+}
+
+.contact ul li a:hover {
+    text-decoration: underline; 
+}
+
+.contact iframe {
+    margin-top: 20px;
+    border: none; 
+    border-radius: 10px; 
+}
+
 
 .feed {
     background-color: white;
