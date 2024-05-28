@@ -151,7 +151,7 @@ if ($result_events->num_rows > 0) {
                     $result = $conn->query($sql);
                     if ($result->num_rows > 0) {
                         $row = $result->fetch_assoc();
-                        echo "<img src='".$row['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
+                        echo "<a href='vous.php'><img src='".$row['photoProfil']."' alt='Photo de profil' class='profile-pic'></a>";
                     }
                 }
                 ?>
