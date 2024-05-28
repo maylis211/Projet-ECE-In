@@ -2,7 +2,7 @@ $(document).ready(function(){
     // Initialiser le carrousel
     $('.slick-carousel').slick({
         autoplay: true,
-        autoplaySpeed: 3000, // Vitesse de défilement en millisecondes (ms)
+        autoplaySpeed: 1000, // Vitesse de défilement en millisecondes (ms)
         dots: true, // Afficher les points de navigation
         arrows: false, // Masquer les flèches de navigation
         infinite: true,
