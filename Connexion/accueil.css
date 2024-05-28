@@ -244,7 +244,7 @@ main {
 }
 
 .events-carousel {
-    position: relative;
+    position: center;
     overflow: hidden;
     margin-top: 20px;
 }
@@ -253,12 +253,16 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
 .carousel-slide img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 300px; 
+    height: 300px; 
+    object-fit: cover;
     border-radius: 10px;
+    display: block;
+    margin: 0 auto;
 }
 
 

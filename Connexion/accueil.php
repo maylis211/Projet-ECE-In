@@ -100,42 +100,45 @@ if ($result_events->num_rows > 0) {
     <link rel="stylesheet" href="accueil.css">
     <script src="accueil.js"></script>
     <!-- Liens vers les fichiers CSS de Slick Carousel -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
+
 </head>
 <body>
 <header>
-    <div class="logo">
-        <a href="accueil.php"><img src="logo.jpg" alt="Logo ECE In"></a>
-    </div>
-    <nav>
-        <ul>
-            <li><div class="ongletSelect"><a href="accueil.php">Accueil</a></div></li>
-            <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
-            <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
-            <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
-            <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
-            <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
-        </ul>
-    </nav>
-</header>
-<main>
-    <section class="presentation">
-        <h1>Bienvenue sur ECE In</h1>
-        <p>ECE In est un réseau social professionnel conçu pour les membres de la communauté ECE Paris. Que vous soyez étudiant de licence, master, doctorat, apprenti en entreprise, enseignant ou employé de l'école, ECE In est là pour vous aider à prendre votre vie professionnelle au sérieux.</p>
-        <p>Notre plateforme offre un espace où vous pouvez vous connecter avec d'autres professionnels, échanger des idées, rechercher des opportunités de carrière, et bien plus encore.</p>
-    </section>
-    <section class="event">
-        <h2>Évènement de la semaine</h2>
-        <p>Restez informé sur les événements importants de la semaine à l'ECE Paris.</p>
-        <!-- Conteneur du carrousel -->
-        <div class="slick-carousel">
-            <div class="carousel-slide"><img src="uploads/image1.jpg" alt="Image 1" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
-            <div class="carousel-slide"><img src="uploads/image2.jpg" alt="Image 2" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
-            <div class="carousel-slide"><img src="uploads/image3.jpg" alt="Image 3" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
-            <!-- Ajoutez d'autres images ici selon vos besoins -->
+        <div class="logo">
+            <a href="accueil.php"><img src="logo.jpg" alt="Logo ECE In"></a>
         </div>
-    </section>
+        <nav>
+            <ul>
+                <li><div class="ongletSelect"><a href="accueil.php">Accueil</a></div></li>
+                <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
+                <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
+                <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
+                <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+            </ul>
+        </nav>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    </header>
+    <main>
+        <section class="presentation">
+            <h1>Bienvenue sur ECE In</h1>
+            <p>ECE In est un réseau social professionnel conçu pour les membres de la communauté ECE Paris. Que vous soyez étudiant de licence, master, doctorat, apprenti en entreprise, enseignant ou employé de l'école, ECE In est là pour vous aider à prendre votre vie professionnelle au sérieux.</p>
+            <p>Notre plateforme offre un espace où vous pouvez vous connecter avec d'autres professionnels, échanger des idées, rechercher des opportunités de carrière, et bien plus encore.</p>
+        </section>
+        <section class="event">
+            <h2>Évènements de la semaine</h2>
+            <p>Restez informé sur les événements importants de la semaine à l'ECE Paris.</p>
+            <!-- Conteneur du carrousel -->
+            <div class="slick-carousel">
+                <div class="carousel-slide"><img src="uploads/image1.jpg" alt="Image 1" class="carousel-image"></div>
+                <div class="carousel-slide"><img src="uploads/image2.jpg" alt="Image 2" class="carousel-image"></div>
+                <div class="carousel-slide"><img src="uploads/image3.jpg" alt="Image 3" class="carousel-image"></div>
+            </div>
+        </section>
 
     <div class="main-content">
         <div class="left-content">
