@@ -13,10 +13,11 @@ if ($conn->connect_error) {
 
 // Récupération des informations de l'utilisateur
 $user_id = $_GET['username']; // Assurez-vous que c'est sécurisé
-$sql_user_info = "SELECT username, description, photoProfil FROM utilisateur WHERE username = '$user_id'";
+$sql_user_info = "SELECT username, description, photoProfil, cv FROM utilisateur WHERE username = '$user_id'";
 $result_user_info = $conn->query($sql_user_info);
 if ($result_user_info->num_rows > 0) {
     $user_info = $result_user_info->fetch_assoc();
+    $cv_path = $user_info['cv']; // Chemin vers le CV
 }
 
 // Récupération des posts de l'utilisateur
@@ -28,7 +29,6 @@ if ($result_user_posts->num_rows > 0) {
         $user_posts[] = $row;
     }
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -60,6 +60,10 @@ if ($result_user_posts->num_rows > 0) {
         <img src="<?php echo $user_info['photoProfil']; ?>" alt="<?php echo $user_info['username']; ?>" class="profile-pic">
         <h1><?php echo $user_info['username']; ?></h1>
         <p><?php echo $user_info['description']; ?></p>
+        <?php if (isset($cv_path)) : ?>
+            <h2>CV<h2>
+            <iframe src="<?php echo htmlspecialchars($cv_path); ?>" width="40%" height="700px" frameborder="0"></iframe>
+        <?php endif; ?>
     </div>
     <div class="parcours">
         <?php
