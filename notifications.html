@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications élégantes</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+
+        #notifications-container {
+            width: 350px;
+            max-width: 90%;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification {
+            border-bottom: 1px solid #e9e9e9;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification:last-child {
+            border-bottom: none;
+        }
+
+        .notification .content {
+            flex-grow: 1;
+        }
+
+        .notification .content h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .notification .content p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .notification .date {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .notification.unread {
+            background-color: #e0f2f1;
+        }
+
+        .notification .seen-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 10px;
+        }
+
+        .notification .seen-indicator.read {
+            background-color: #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div id="notifications-container">
+        <!-- Les notifications seront insérées ici -->
+    </div>
+
+    <script>
+        const notifications = [
+            {
+                id: 1,
+                title: "Conférence à venir",
+                description: "Il y a une conférence organisée par l'Ecole le 15 mars.",
+                date: "15/03/2023",
+                seen: false
+            },
+            {
+                id: 2,
+                title: "Bourse obtenue",
+                description: "Félicitations ! Votre ami a obtenu une bourse d'études.",
+                date: "10/02/2023",
+                seen: true
+            },
+            // Ajoutez d'autres notifications ici
+        ];
+
+
+        function displayNotifications() {
+            const notificationsContainer = document.getElementById('notifications-container');
+
+            notifications.forEach(notification => {
+                const notificationElement = document.createElement('div');
+                notificationElement.classList.add('notification', notification.seen ? 'read' : 'unread');
+
+                const contentElement = document.createElement('div');
+                contentElement.classList.add('content');
+
+                const titleElement = document.createElement('h3');
+                titleElement.textContent = notification.title;
+
+                const descriptionElement = document.createElement('p');
+                descriptionElement.textContent = notification.description;
+
+                const dateElement = document.createElement('div');
+                dateElement.classList.add('date');
+                dateElement.textContent = `Date: ${notification.date}`;
+
+                const seenIndicator = document.createElement('span');
+                seenIndicator.classList.add('seen-indicator', notification.seen ? 'read' : 'unread');
+
+                // Ajoutez les éléments au conteneur de notification
+                contentElement.appendChild(titleElement);
+                contentElement.appendChild(descriptionElement);
+                notificationElement.appendChild(contentElement);
+                notificationElement.appendChild(seenIndicator);
+                notificationElement.appendChild(dateElement);
+
+                // Ajoutez la notification au conteneur principal
+                notificationsContainer.appendChild(notificationElement);
+            });
+        }
+
+        displayNotifications();
+    </script>
+</body>
+</html>
