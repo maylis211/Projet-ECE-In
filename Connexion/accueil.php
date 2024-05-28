@@ -87,8 +87,9 @@ if ($result_events->num_rows > 0) {
     <link rel="stylesheet" href="accueil.css">
     <script src="accueil.js"></script>
     <!-- Liens vers les fichiers CSS de Slick Carousel -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick-theme.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/slick-carousel/slick/slick.min.js"></script>
 
 </head>
 <body>
@@ -116,14 +117,13 @@ if ($result_events->num_rows > 0) {
             <p>Notre plateforme offre un espace où vous pouvez vous connecter avec d'autres professionnels, échanger des idées, rechercher des opportunités de carrière, et bien plus encore.</p>
         </section>
         <section class="event">
-            <h2>Évènement de la semaine</h2>
+            <h2>Évènements de la semaine</h2>
             <p>Restez informé sur les événements importants de la semaine à l'ECE Paris.</p>
             <!-- Conteneur du carrousel -->
             <div class="slick-carousel">
-                <div class="carousel-slide"><img src="uploads/image1.jpg" alt="Image 1" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
-                <div class="carousel-slide"><img src="uploads/image2.jpg" alt="Image 2" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
-                <div class="carousel-slide"><img src="uploads/image3.jpg" alt="Image 3" style="max-width: 50%; max-height: 50%; border-radius: 10px; align-items: center;"></div>
-                <!-- Ajoutez d'autres images ici selon vos besoins -->
+                <div class="carousel-slide"><img src="uploads/image1.jpg" alt="Image 1" class="carousel-image"></div>
+                <div class="carousel-slide"><img src="uploads/image2.jpg" alt="Image 2" class="carousel-image"></div>
+                <div class="carousel-slide"><img src="uploads/image3.jpg" alt="Image 3" class="carousel-image"></div>
             </div>
         </section>
 
