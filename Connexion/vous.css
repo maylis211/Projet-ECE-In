@@ -8,6 +8,8 @@ body {
 
 header {
     background-color: #076d79;
+    background: rgb(7,109,121);
+    background: linear-gradient(90deg, rgba(7,109,121,1) 0%, rgba(9,152,169,1) 98%);
     color: white;
     display: flex;
     align-items: center;
@@ -124,17 +126,21 @@ button:hover {
 }
 
 .onglet:hover {
-    background-color: #05595a;
-}
+    box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
+    -webkit-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
+    -moz-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;}
 
 .ongletSelect {
     font-weight: bold; /* Met en gras le texte de l'onglet */
-    color: #076d79; /* Change la couleur du texte de l'onglet */
-    border-bottom: 2px solid #076d79; /* Ajoute une bordure en bas de l'onglet */
-    background-color: #05595a; /* Ajoute un arrière-plan gris clair */
+    color: #088897; /* Change la couleur du texte de l'onglet */
+    border-bottom: 2px solid #088897; /* Ajoute une bordure en bas de l'onglet */
+    background-color: #088897; /* Ajoute un arrière-plan gris clair */
     border-radius: 5px; /* Arrondit les coins de l'onglet */
     padding: 8px 12px; /* Ajoute de l'espace à l'intérieur de l'onglet */
     margin: 0 5px; /* Ajoute un espace entre les onglets */
     transition: background-color 0.3s; /* Ajoute une transition fluide lors du survol */
+    box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
+-webkit-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
+-moz-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
 }
 

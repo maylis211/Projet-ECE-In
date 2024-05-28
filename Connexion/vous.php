@@ -131,6 +131,7 @@ if(isset($_POST["delete_cv"])) {
             echo "<h1>" . $row_user['username'] . "</h1>";
             echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
             // Formulaire pour uploader une nouvelle photo de profil
+            echo'<h4>Changer de photo de profil<h4>';
             echo '<form action="" method="post" enctype="multipart/form-data">';
             echo '<input type="file" name="photo" accept="image/*"><br>';
             echo '<input type="submit" name="submit" value="Valider"><br>';
