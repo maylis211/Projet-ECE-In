@@ -123,7 +123,6 @@ $sql_pending_requests = "SELECT f.id, f.username
         WHERE f.friend_name = '$user_id' AND f.status='pending'";
 $result_pending_requests = $conn->query($sql_pending_requests);
 
-$conn->close(); // Fermeture de la connexion
 
 ?>
 
@@ -145,7 +144,7 @@ $conn->close(); // Fermeture de la connexion
             <li><div class="onglet"><a href="accueil.php">Accueil</a></div></li>
             <li><div class="ongletSelect"><a href="reseau.php">Mon Réseau</a></div></li>
             <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
-            <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
+            <li><div class="onglet"><a href="notifications.php">Notifications</a></div></li>
             <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
             <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
         </ul>
@@ -211,7 +210,11 @@ $conn->close(); // Fermeture de la connexion
         } else {
             echo '<p>Vous n\'avez aucun ami.</p>';
         }
-        ?>
+
+$conn->close(); // Fermeture de la connexion
+
+?>
+
     </main>
 </body>
 </html>

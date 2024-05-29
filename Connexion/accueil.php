@@ -174,8 +174,10 @@ if ($result_events->num_rows > 0) {
             <section class="feed">
                 <h2>Fil d'actualités</h2>
                 <?php
-                $sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username ORDER BY posts.created_at DESC";
-                $result_posts = $conn->query($sql_posts);
+$username = $_SESSION['username'];
+$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username WHERE (utilisateur.profil_public = 1 OR utilisateur.username = '$username' OR utilisateur.username IN (SELECT friend_name FROM friends WHERE username = '$username' AND status = 'accepted') OR utilisateur.username IN (SELECT username FROM friends WHERE friend_name = '$username' AND status = 'accepted')) ORDER BY posts.created_at DESC";
+
+  $result_posts = $conn->query($sql_posts);
                 if ($result_posts->num_rows > 0) {
                     while ($row_post = $result_posts->fetch_assoc()) {
                         echo "<div class='post'>";

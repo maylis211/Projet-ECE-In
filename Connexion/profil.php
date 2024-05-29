@@ -49,7 +49,7 @@ if ($result_user_posts->num_rows > 0) {
             <li><div class="onglet"><a href="accueil.php">Accueil</a></div></li>
             <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
             <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
-            <li><div class="onglet"><a href="notifications.html">Notifications</a></div></li>
+            <li><div class="onglet"><a href="notifications.php">Notifications</a></div></li>
             <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
             <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
         </ul>
