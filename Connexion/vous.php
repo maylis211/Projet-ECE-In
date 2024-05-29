@@ -163,7 +163,6 @@ if (isset($_SESSION['username'])) {
     $result_user = $conn->query($sql_user);
     if ($result_user->num_rows > 0) {
         $row_user = $result_user->fetch_assoc();
-        echo '<div class="center-container">'; // Ajouter cette ligne
         echo "<h1>" . $row_user['username'] . "</h1>";
         echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
         // Formulaire pour uploader une nouvelle photo de profil
@@ -172,7 +171,7 @@ if (isset($_SESSION['username'])) {
         echo '<input type="file" name="photo" accept="image/*"><br>';
         echo '<input type="submit" name="submit" value="Valider"><br>';
         echo '</form>';
-        echo '</div>'; // Fermer le div
+        
     }
 }
         ?>
@@ -294,32 +293,71 @@ if ($result_parcours->num_rows > 0) {
     echo "<p>Aucun parcours disponible.</p>";
 }
 echo '</div>';
+$username = $_SESSION['username'];
+$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, utilisateur.username, utilisateur.photoProfil 
+            FROM posts 
+            JOIN utilisateur ON posts.username = utilisateur.username 
+            WHERE utilisateur.username = '$username' 
+            ORDER BY posts.created_at DESC";
 
-$sql_posts = "SELECT * FROM posts WHERE username='$username' ORDER BY created_at DESC";
 $result_posts = $conn->query($sql_posts);
 if ($result_posts->num_rows > 0) {
+while ($row_post = $result_posts->fetch_assoc()) {
     echo "<div class='post'>";
-    echo "<h2>Vos Posts</h2>";
-    while ($row_post = $result_posts->fetch_assoc()) {
-        
-        echo "<div class='post-content'>";
-        echo "<h3>" . $row_post['username'] . "</h3>";
-        echo "<p>" . $row_post['content'] . "</p>";
-        if (!empty($row_post['image'])) {
-            echo "<img src='" . $row_post['image'] . "' alt='Image du post' style='max-width:10%;'><br>";
-        }
-        echo "<span class='timestamp'>" . $row_post['created_at'] . "</span>";
-
-        echo '<form method="POST" action="">';
-        echo '<input type="hidden" name="post_id" value="' . $row_post['id'] . '">';
-        echo '<button type="submit" name="delete_post">Supprimer</button>';
-        echo '</form>';
-        echo "</div>";
-        echo "</div>";
+    echo "<div class='post2'>";
+    echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
+    echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic2'>";
+    echo "</a>";
+    echo "<div class='post-content'>";
+    echo "<h3>".$row_post['username']."</h3>";
+    echo "<p>".$row_post['content']."</p>";
+    
+    $file_extension = pathinfo($row_post['media'], PATHINFO_EXTENSION);
+    $allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+    $allowed_video_extensions = ['mp4', 'webm', 'ogg'];
+    
+    if (in_array($file_extension, $allowed_image_extensions)) {
+        echo "<img src='".$row_post['media']."' alt='Image du post' style='max-width:100%;'>";
+    } elseif (in_array($file_extension, $allowed_video_extensions)) {
+        echo "<video controls style='max-width:100%;'>
+                <source src='".$row_post['media']."' type='video/mp4'>
+                Your browser does not support the video tag.
+                </video>";
     }
-} else {
-    echo "<p>Aucun post disponible.</p>";
+    
+    echo "<span class='timestamp'>".$row_post['created_at']."</span>";
+    echo "<form method='POST' action=''>";
+    echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
+    echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
+    echo "<button type='submit' name='submit_comment'>Commenter</button>";
+    echo "</form>";
+
+    // Afficher les commentaires
+    $id = $row_post['id'];
+    $sql_comments = "SELECT * FROM comments WHERE id = '$id' ORDER BY created_at DESC";
+    $result_comments = $conn->query($sql_comments);
+
+    if ($result_comments->num_rows > 0) {
+        echo "<div class='comments'>";
+        while ($row_comment = $result_comments->fetch_assoc()) {
+            echo "<div class='comment'>";
+            echo "<p><strong>".$row_comment['username'].":</strong> ".$row_comment['content']."</p>";
+            echo "</div>";
+        }
+        echo "</div>";
+    } else {
+        echo "<p>Aucun commentaire.</p>";
+    }
+    
+    echo "</div>"; // Fermeture de post-content
+    echo "</div>"; // Fermeture de post
 }
+} else {
+echo "<p>Aucun post disponible.</p>";
+}
+   
+echo "</div>";
+echo "</div>";
 ?>
 
 </section>
