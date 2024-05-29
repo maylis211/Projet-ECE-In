@@ -60,6 +60,7 @@ if ($result_user_posts->num_rows > 0) {
         <img src="<?php echo $user_info['photoProfil']; ?>" alt="<?php echo $user_info['username']; ?>" class="profile-pic">
         <h1><?php echo $user_info['username']; ?></h1>
         <p><?php echo $user_info['description']; ?></p>
+        
         <?php if (isset($cv_path)) : ?>
             <h2>CV<h2>
             <iframe src="<?php echo htmlspecialchars($cv_path); ?>" width="40%" height="700px" frameborder="0"></iframe>
