@@ -11,38 +11,52 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Vérifier si l'utilisateur est connecté
+if (!isset($_SESSION['username'])) {
+    die("Vous devez être connecté pour accéder à cette page.");
+}
+$user_id = $_SESSION['username'];
+
 // Vérifier si le paramètre GET 'ami' est défini
 if (isset($_GET['ami'])) {
     // Récupérer le nom d'utilisateur de l'ami à ajouter
-    $ami = $_GET['ami'];
+    $ami = $conn->real_escape_string($_GET['ami']);
 
-    // Récupérer le nom d'utilisateur de l'utilisateur connecté
-    $user_id = $_SESSION['username']; // Assurez-vous d'avoir une variable de session contenant le nom d'utilisateur de l'utilisateur connecté
-
-    // Mettre à jour la demande d'ami dans la table utilisateur
-    $sql_update_demande = "UPDATE utilisateur SET demande_ami='$ami' WHERE username='$user_id'";
-    if ($conn->query($sql_update_demande) === TRUE) {
+    // Insérer la demande d'ami dans la table friends
+    $sql_send_request = "INSERT INTO friends (username, friend_name, status) VALUES ('$user_id', '$ami', 'pending')";
+    if ($conn->query($sql_send_request) === TRUE) {
         echo "Demande d'ami envoyée à $ami.";
     } else {
         echo "Erreur lors de l'envoi de la demande d'ami: " . $conn->error;
+    }
+}
+// Si le formulaire pour accepter une demande d'ami est soumis
+if (isset($_POST["accept_friend_request"])) {
+    $request_id = $conn->real_escape_string($_POST['request_id']);
+
+    // Mettre à jour le statut de la demande d'ami dans la table friends
+    $sql_accept_request = "UPDATE friends SET status='accepted' WHERE id='$request_id'";
+    if ($conn->query($sql_accept_request) === TRUE) {
+        echo "Demande d'ami acceptée.";
+    } else {
+        echo "Erreur lors de l'acceptation de la demande d'ami: " . $conn->error;
     }
 }
 
 // Si le formulaire pour envoyer une demande d'ami est soumis
 if (isset($_POST["send_friend_request"])) {
     $friend_username = $conn->real_escape_string($_POST['friend_username']);
-    $username = $_SESSION['username'];
 
     // Vérifier si l'utilisateur essaie de s'envoyer une demande d'ami à lui-même
-    if ($friend_username === $username) {
+    if ($friend_username === $user_id) {
         echo "Vous ne pouvez pas vous envoyer une demande d'ami à vous-même.";
     } else {
         // Vérifier si l'utilisateur à ajouter existe
         $sql_check_user = "SELECT username FROM utilisateur WHERE username='$friend_username'";
         $result_check_user = $conn->query($sql_check_user);
         if ($result_check_user->num_rows > 0) {
-            // Insérer la demande d'ami dans la base de données
-            $sql_send_request = "INSERT INTO friends (username, friend_name, status) VALUES ('$username', '$friend_username', 'pending')";
+            // Insérer la demande d'ami dans la table friends
+            $sql_send_request = "INSERT INTO friends (username, friend_name, status) VALUES ('$user_id', '$friend_username', 'pending')";
             if ($conn->query($sql_send_request) === TRUE) {
                 echo "Demande d'ami envoyée avec succès.";
             } else {
@@ -55,7 +69,6 @@ if (isset($_POST["send_friend_request"])) {
 }
 
 // Récupération des utilisateurs qui ne sont pas encore amis avec l'utilisateur connecté
-$user_id = $_SESSION['username'];
 $sql_non_amis = "SELECT DISTINCT u.username, u.description, u.photoProfil 
         FROM utilisateur u 
         WHERE u.username != '$user_id' 
@@ -63,67 +76,55 @@ $sql_non_amis = "SELECT DISTINCT u.username, u.description, u.photoProfil
             SELECT f.friend_name FROM friends f WHERE f.username = '$user_id'
             UNION
             SELECT f.username FROM friends f WHERE f.friend_name = '$user_id'
-            UNION
-            SELECT f2.friend_name FROM friends f1 JOIN friends f2 ON f1.friend_name = f2.username WHERE f1.username = '$user_id'
-            UNION
-            SELECT f1.username FROM friends f1 JOIN friends f2 ON f1.friend_name = f2.username WHERE f2.friend_name = '$user_id'
         )";
 
 $result_non_amis = $conn->query($sql_non_amis);
 $utilisateurs_non_amis = [];
-if ($result_non_amis->num_rows > 0) {
-    while ($row = $result_non_amis->fetch_assoc()) {
-        $utilisateurs_non_amis[] = $row;
+if ($result_non_amis) {
+    if ($result_non_amis->num_rows > 0) {
+        while ($row = $result_non_amis->fetch_assoc()) {
+            $utilisateurs_non_amis[] = $row;
+        }
+    } else {
+        echo "Aucun utilisateur à ajouter.";
     }
+} else {
+    echo "Erreur SQL: " . $conn->error;
 }
 
 // Récupération des amis de l'utilisateur
 $sql_amis = "SELECT u.username, u.description, u.photoProfil 
         FROM utilisateur u 
         JOIN friends f ON u.username = f.friend_name
-        WHERE f.username = '$user_id'
+        WHERE f.username = '$user_id' AND f.status = 'accepted'
         UNION
         SELECT u.username, u.description, u.photoProfil 
         FROM utilisateur u 
         JOIN friends f ON u.username = f.username
-        WHERE f.friend_name = '$user_id'";
+        WHERE f.friend_name = '$user_id' AND f.status = 'accepted'";
 
 $result_amis = $conn->query($sql_amis);
 $amis = [];
-if ($result_amis->num_rows > 0) {
-    while ($row = $result_amis->fetch_assoc()) {
-        $amis[] = $row;
-    }
-}
-
-// Récupération des demandes d'amis en attente
-$sql_pending_requests = "SELECT u.username, u.photoProfil 
-        FROM utilisateur u 
-        JOIN friends f ON u.username = f.username 
-        WHERE f.friend_name = '$user_id' AND f.status = 'pending'";
-$result_pending_requests = $conn->query($sql_pending_requests);
-$pending_requests = [];
-if ($result_pending_requests->num_rows > 0) {
-    while ($row = $result_pending_requests->fetch_assoc()) {
-        $pending_requests[] = $row;
-    }
-}
-
-// Si le formulaire pour accepter une demande d'ami est soumis
-if (isset($_POST["accept_friend_request"])) {
-    $request_username = $conn->real_escape_string($_POST['request_username']);
-    $username = $_SESSION['username'];
-
-    $sql_accept_request = "UPDATE friends SET status='accepted' WHERE username='$request_username' AND friend_name='$username'";
-    if ($conn->query($sql_accept_request) === TRUE) {
-        echo "Demande d'ami acceptée.";
+if ($result_amis) {
+    if ($result_amis->num_rows > 0) {
+        while ($row = $result_amis->fetch_assoc()) {
+            $amis[] = $row;
+        }
     } else {
-        echo "Erreur lors de l'acceptation de la demande d'ami: " . $conn->error;
+        echo "Vous n'avez aucun ami.";
     }
+} else {
+    echo "Erreur SQL: " . $conn->error;
 }
 
-// Fermer la connexion à la base de données
-$conn->close();
+// Affichage des demandes d'amis en attente
+$sql_pending_requests = "SELECT f.id, f.username 
+        FROM friends f 
+        WHERE f.friend_name = '$user_id' AND f.status='pending'";
+$result_pending_requests = $conn->query($sql_pending_requests);
+
+$conn->close(); // Fermeture de la connexion
+
 ?>
 
 <!DOCTYPE html>
@@ -152,6 +153,7 @@ $conn->close();
     </header>
     <main>
         <h1>Mon Réseau</h1>
+
         <!-- Formulaire pour envoyer une demande d'ami -->
         <h2>Envoyer une demande d'ami</h2>
         <form action="" method="post">
@@ -162,14 +164,14 @@ $conn->close();
         <!-- Afficher les demandes d'amis en attente -->
         <h2>Demandes d'amis en attente</h2>
         <?php
-        if (count($pending_requests) > 0) {
-            foreach ($pending_requests as $request) {
+        if ($result_pending_requests->num_rows > 0) {
+            while ($row_request = $result_pending_requests->fetch_assoc()) {
                 echo '<div class="pending-request">';
-                echo '<img src="' . $request['photoProfil'] . '" alt="Photo de profil de ' . $request['username'] . '" class="profile-pic">';
-                echo '<p>' . $request['username'] . '</p>';
+                echo '<p>Demande d\'ami de: ' . $row_request['username'] . '</p>';
                 echo '<form action="" method="post">';
-                echo '<input type="hidden" name="request_username" value="' . $request['username'] . '">';
+                echo '<input type="hidden" name="request_id" value="' . $row_request['id'] . '">';
                 echo '<input type="submit" name="accept_friend_request" value="Accepter">';
+                echo '<input type="submit" name="reject_friend_request" value="Rejeter">';
                 echo '</form>';
                 echo '</div>';
             }
