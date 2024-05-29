@@ -156,37 +156,41 @@ if (isset($_POST["remove_friend"])) {
     </nav>
 </header>
 <section class="user-profile">
+
+    <div class="left-column">
     <?php
-    if (isset($_SESSION['username'])) {
-        $username = $_SESSION['username'];
-        $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
-        $result_user = $conn->query($sql_user);
-        if ($result_user->num_rows > 0) {
-            $row_user = $result_user->fetch_assoc();
-            echo "<h1>" . $row_user['username'] . "</h1>";
-            echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
-            // Formulaire pour uploader une nouvelle photo de profil
-            echo '<h4>Changer de photo de profil</h4>';
-            echo '<form action="" method="post" enctype="multipart/form-data">';
-            echo '<input type="file" name="photo" accept="image/*"><br>';
-            echo '<input type="submit" name="submit" value="Valider"><br>';
-            echo '</form>';
-            // Formulaire pour ajouter ou modifier la description
-            echo '<section class="section-description"><h2>Ajouter une description</h2>';
-            echo '<form action="" method="post">';
-            echo '<textarea name="descriptionU" placeholder="Ajouter une description..."></textarea><br>';
-            echo '<input type="submit" name="submit_description" value="Valider"><br>';
-            echo '</form>';
-        }
+if (isset($_SESSION['username'])) {
+    $username = $_SESSION['username'];
+    $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
+    $result_user = $conn->query($sql_user);
+    if ($result_user->num_rows > 0) {
+        $row_user = $result_user->fetch_assoc();
+        echo '<div class="center-container">'; // Ajouter cette ligne
+        echo "<h1>" . $row_user['username'] . "</h1>";
+        echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
+        // Formulaire pour uploader une nouvelle photo de profil
+        echo '<h4>Changer de photo de profil</h4>';
+        echo '<form action="" method="post" enctype="multipart/form-data">';
+        echo '<input type="file" name="photo" accept="image/*"><br>';
+        echo '<input type="submit" name="submit" value="Valider"><br>';
+        echo '</form>';
+        echo '</div>'; // Fermer le div
+        // Formulaire pour ajouter ou modifier la description
+        echo '<section class="section-description"><h2>Ajouter une description</h2>';
+        echo '<form action="" method="post">';
+        echo '<textarea name="descriptionU" placeholder="Ajouter une description..."></textarea><br>';
+        echo '<input type="submit" name="submit_description" value="Valider"><br>';
+        echo '</form>';
     }
-    ?>
+}
+?>
+
 <h2>Paramètres de confidentialité du profil</h2>
 <form action="" method="post">
     <input type="checkbox" name="profil_public" id="profil_public" <?php if ($row_user['profil_public'] == 1) echo 'checked'; ?>>
     <label for="profil_public">Profil public</label><br>
     <input type="submit" name="submit_privacy_settings" value="Enregistrer"><br>
 </form>
-
     <!-- Afficher les amis acceptés -->
     <h2>Vos amis</h2>
     <?php
@@ -240,7 +244,8 @@ if (isset($_POST["remove_friend"])) {
         echo "<p>Aucun CV disponible.</p>";
     }
     ?>
-
+    </div>
+    <div class="right-column">
     <!-- Formulaire pour ajouter une étape de parcours -->
     <h2>Ajouter une étape de parcours</h2>
     <form action="" method="post">
@@ -296,6 +301,7 @@ if (isset($_POST["remove_friend"])) {
         echo "<p>Aucun post disponible.</p>";
     }
     ?>
+    </div>
 </section>
 </body>
 </html>
