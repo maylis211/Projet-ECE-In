@@ -52,9 +52,15 @@ nav ul li a {
 }
 
 footer {
+    background-color: #076d79;
+    color: white;
     text-align: center;
-    padding: 20px;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }
+
 
 button {
     padding: 10px 20px;
@@ -76,8 +82,14 @@ button:hover {
     display: block;
     margin: 0 auto;
 }
-.user-profile {
-    text-align: center; /* Centrer les éléments */
+.user-profil-photo{
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    text-align: center;
 }
 .user-profile form {
     margin-top: 20px; /* Ajouter de l'espace entre les éléments */
@@ -156,19 +168,28 @@ button:hover {
     justify-content: space-between;
 }
 
-.left-column,
-.right-column {
-    width: calc(50% - 20px); 
+.container{
+    display: flex;
+    margin: 0 20px;
 }
 
-.left-column {
+.left-column, .right-column {
+    flex: 1;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    max-width: 650px;
     text-align: center;
 }
 
 .right-column {
-    text-align: center;
-    margin-top: 325px;
+    margin-left: 20px; /* Espace entre les deux colonnes */
 }
+
+
+
 
 
 .friend {
