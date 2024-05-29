@@ -8,4 +8,5 @@ name'>".$_SESSION['name']."</b> ".stripslashes(htmlspecialchars($text))."<br></d
 $myfile = fopen(__DIR__ . "/log.html", "a") or die("Impossible d'ouvrir le fichier " . __DIR__ . "/log.html");
 fwrite($myfile, $text_message);
 fclose($myfile);
+
 }
