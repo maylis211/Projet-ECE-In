@@ -189,6 +189,14 @@ button:hover {
 }
 
 
+.post{
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
 
 
 
