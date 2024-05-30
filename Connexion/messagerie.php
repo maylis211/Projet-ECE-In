@@ -5,7 +5,7 @@ session_start();
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "messagerie";
+$dbname = "projet";
 
 // Créer une connexion
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -78,11 +78,15 @@ if (isset($_GET['friend'])) {
 }
 
 // Script de publication des messages
-if (isset($_POST['text']) && isset($_POST['friend'])) {
-    $text = $_POST['text'];
+if (isset($_POST['usermsg']) && isset($_POST['friend'])) {
+    $text = $_POST['usermsg'];
     $friend = $_POST['friend'];
     $query = "INSERT INTO comments (username, friend_name, content) VALUES ('$username', '$friend', '$text')";
-    $conn->query($query);
+    if ($conn->query($query) === TRUE) {
+        echo "Message envoyé avec succès";
+    } else {
+        echo "Erreur: " . $query . "<br>" . $conn->error;
+    }
 }
 ?>
 
@@ -158,9 +162,10 @@ $(document).ready(function () {
     $("#submitmsg").click(function () {
         var clientmsg = $("#usermsg").val();
         var friend = $("input[name='friend']").val();
-        $.post("messagerie.php?friend=<?php echo $friend; ?>", { text: clientmsg, friend: friend });
+        $.post("messagerie.php?friend=<?php echo $friend; ?>", { usermsg: clientmsg, friend: friend }, function() {
+            loadLog();
+        });
         $("#usermsg").val("");
-        loadLog();
         return false;
     });
 
