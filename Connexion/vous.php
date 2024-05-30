@@ -308,6 +308,7 @@ while ($row_post = $result_posts->fetch_assoc()) {
     echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
     echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic2'>";
     echo "</a>";
+
     echo "<div class='post-content'>";
     echo "<h3>".$row_post['username']."</h3>";
     echo "<p>".$row_post['content']."</p>";
@@ -327,7 +328,7 @@ while ($row_post = $result_posts->fetch_assoc()) {
     
     echo "<span class='timestamp'>".$row_post['created_at']."</span>";
     echo "<form method='POST' action=''>";
-    echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
+    echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea><br>";
     echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
     echo "<button type='submit' name='submit_comment'>Commenter</button>";
     echo "</form>";
@@ -363,6 +364,7 @@ echo "</div>";
 </section>
 
 </body>
+<footer></footer>
 </html>
 
 <?php
