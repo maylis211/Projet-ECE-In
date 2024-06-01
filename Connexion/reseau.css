@@ -97,3 +97,12 @@ main {
 -webkit-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
 -moz-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
 }
+
+.friend{
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+    
+}

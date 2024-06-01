@@ -76,18 +76,6 @@ if (isset($_POST['delete_cv'])) {
         echo "Erreur lors de la suppression du CV: " . $conn->error;
     }
 }
-// Si le formulaire pour modifier les paramètres de confidentialité du profil est soumis
-if (isset($_POST['submit_privacy_settings'])) {
-    $profil_public = isset($_POST['profil_public']) ? 1 : 0; // 1 pour profil public, 0 pour profil privé
-    $username = $_SESSION['username'];
-    $sql_update_privacy_settings = "UPDATE utilisateur SET profil_public='$profil_public' WHERE username='$username'";
-    if ($conn->query($sql_update_privacy_settings) === TRUE) {
-        echo "Paramètres de confidentialité du profil mis à jour avec succès.";
-    } else {
-        echo "Erreur lors de la mise à jour des paramètres de confidentialité du profil: " . $conn->error;
-    }
-}
-
 
 // Si le formulaire pour ajouter une étape de parcours est soumis
 if (isset($_POST['submit_parcours'])) {
@@ -103,6 +91,23 @@ if (isset($_POST['submit_parcours'])) {
         echo "Étape de parcours ajoutée avec succès.";
     } else {
         echo "Erreur lors de l'ajout de l'étape de parcours: " . $conn->error;
+    }
+}
+
+// Si le formulaire pour ajouter un projet est soumis
+if (isset($_POST['submit_projet'])) {
+    $titre_projet = $conn->real_escape_string($_POST['titre_projet']);
+    $description_projet = $conn->real_escape_string($_POST['description_projet']);
+    $date_debut_projet = $conn->real_escape_string($_POST['date_debut_projet']);
+    $date_fin_projet = $conn->real_escape_string($_POST['date_fin_projet']);
+    $username = $_SESSION['username'];
+
+    $sql_insert_projet = "INSERT INTO projet (username, titre, description, date_debut, date_fin) 
+                          VALUES ('$username', '$titre_projet', '$description_projet', '$date_debut_projet', '$date_fin_projet')";
+    if ($conn->query($sql_insert_projet) === TRUE) {
+        echo "Projet ajouté avec succès.";
+    } else {
+        echo "Erreur lors de l'ajout du projet: " . $conn->error;
     }
 }
 
@@ -129,8 +134,8 @@ if (isset($_POST["remove_friend"])) {
         echo "Erreur lors de la suppression de l'ami: " . $conn->error;
     }
 }
-
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -155,216 +160,179 @@ if (isset($_POST["remove_friend"])) {
         </ul>
     </nav>
 </header>
-<section class="user-profil-photo">
-<?php
-if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
-    $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
-    $result_user = $conn->query($sql_user);
-    if ($result_user->num_rows > 0) {
-        $row_user = $result_user->fetch_assoc();
-        echo "<h1>" . $row_user['username'] . "</h1>";
-        echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
-        // Formulaire pour uploader une nouvelle photo de profil
-        echo '<h4>Changer de photo de profil</h4>';
-        echo '<form action="" method="post" enctype="multipart/form-data">';
-        echo '<input type="file" name="photo" accept="image/*"><br>';
-        echo '<input type="submit" name="submit" value="Valider"><br>';
-        echo '</form>';
-        
+<section class="user-profile">
+    <?php
+    if (isset($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+        $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
+        $result_user = $conn->query($sql_user);
+        if ($result_user->num_rows > 0) {
+            $row_user = $result_user->fetch_assoc();
+            echo "<h1>" . $row_user['username'] . "</h1>";
+            echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
+            // Formulaire pour uploader une nouvelle photo de profil
+            echo '<h4>Changer de photo de profil</h4>';
+            echo '<form action="" method="post" enctype="multipart/form-data">';
+            echo '<input type="file" name="photo" accept="image/*"><br>';
+            echo '<input type="submit" name="submit" value="Valider"><br>';
+            echo '</form>';
+            // Formulaire pour ajouter ou modifier la description
+            echo '<section class="section-description"><h2>Ajouter une description</h2>';
+            echo '<form action="" method="post">';
+            echo '<textarea name="descriptionU" placeholder="Ajouter une description..."></textarea><br>';
+            echo '<input type="submit" name="submit_description" value="Valider"><br>';
+            echo '</form>';
+        }
     }
-}
-        ?>
-        </section>
-        <div class="container">
-        <section class="left-column">
+    ?>
+<h2>Paramètres de confidentialité du profil</h2>
+<form action="" method="post">
+    <input type="checkbox" name="profil_public" id="profil_public" <?php if ($row_user['profil_public'] == 1) echo 'checked'; ?>>
+    <label for="profil_public">Profil public</label><br>
+    <input type="submit" name="submit_privacy_settings" value="Enregistrer"><br>
+</form>
 
-<?php
-if (isset($_SESSION['username'])) {
-    $username = $_SESSION['username'];
-    $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
-    $result_user = $conn->query($sql_user);
-    if ($result_user->num_rows > 0) {
-        $row_user = $result_user->fetch_assoc();
-// Formulaire pour ajouter ou modifier la description
-echo '<div class="post">';
-echo '<section class="section-description"><h2>Ajouter une description</h2>';
-echo '<form action="" method="post">';
-echo '<textarea name="descriptionU" placeholder="Ajouter une description..."></textarea><br>';
-echo '<input type="submit" name="submit_description" value="Valider"><br>';
-echo '</form>';
-echo '</section>';
-
-    }}
-
-echo '<h2>Paramètres de confidentialité du profil</h2>';
-echo '<form action="" method="post">';
-echo '<input type="checkbox" name="profil_public" id="profil_public">';
-if ($row_user['profil_public'] == 1) echo '<checked>'; 
-echo '<label for="profil_public">Profil public</label><br>';
-echo '<input type="submit" name="submit_privacy_settings" value="Enregistrer"><br>';
-echo '</form>';
-echo '</div>';
-echo '<div class="post">';
-echo '<h2>Vos amis</h2>';
-
-$sql_friends = "SELECT u.username, u.photoProfil FROM utilisateur u 
-                JOIN friends f ON u.username = f.friend_name 
-                WHERE f.username = '$username' AND f.status='accepted'
-                UNION
-                SELECT u.username, u.photoProfil FROM utilisateur u 
-                JOIN friends f ON u.username = f.username 
-                WHERE f.friend_name = '$username' AND f.status='accepted'";
-$result_friends = $conn->query($sql_friends);
-if ($result_friends->num_rows > 0) {
-    while ($row_friend = $result_friends->fetch_assoc()) {
-        echo '<div class="friend">';
-        echo '<img src="' . $row_friend['photoProfil'] . '" alt="Photo de profil de ' . $row_friend['username'] . '" class="friend-pic">';
-        echo '<p>' . $row_friend['username'] . '</p>';
-        echo '<form action="" method="post" style="margin-left: 20px;">';
-        echo '<input type="hidden" name="friend_username" value="' . $row_friend['username'] . '">';
-        echo '<input type="submit" name="remove_friend" value="Supprimer l\'ami">';
-        echo '</form>';
-        echo '</div>';
+    <!-- Afficher les amis acceptés -->
+    <h2>Vos amis</h2>
+    <?php
+    $sql_friends = "SELECT u.username, u.photoProfil FROM utilisateur u 
+                    JOIN friends f ON u.username = f.friend_name 
+                    WHERE f.username = '$username' AND f.status='accepted'
+                    UNION
+                    SELECT u.username, u.photoProfil FROM utilisateur u 
+                    JOIN friends f ON u.username = f.username 
+                    WHERE f.friend_name = '$username' AND f.status='accepted'";
+    $result_friends = $conn->query($sql_friends);
+    if ($result_friends->num_rows > 0) {
+        while ($row_friend = $result_friends->fetch_assoc()) {
+            echo '<div class="friend">';
+            echo '<img src="' . $row_friend['photoProfil'] . '" alt="Photo de profil de ' . $row_friend['username'] . '" class="friend-pic">';
+            echo '<p>' . $row_friend['username'] . '</p>';
+            echo '<form action="" method="post" style="margin-left: 20px;">';
+            echo '<input type="hidden" name="friend_username" value="' . $row_friend['username'] . '">';
+            echo '<input type="submit" name="remove_friend" value="Supprimer l\'ami">';
+            echo '</form>';
+            echo '</div>';
+        }
+    } else {
+        echo '<p>Vous n\'avez aucun ami.</p>';
     }
-} else {
-    echo '<p>Vous n\'avez aucun ami.</p>';
-}
-echo '</div>';
-echo '<div class="post">';
-echo '<h2>Ajouter votre CV</h2>';
-echo '<form action="" method="post" enctype="multipart/form-data">';
-    echo '<input type="file" name="cv" accept=".pdf,.doc,.docx"><br>';
-    echo '<input type="submit" name="submit_cv" value="Uploader le CV"><br>';
-echo '</form>';
+    ?>
+    <h2>Ajouter votre CV</h2>
+    <form action="" method="post" enctype="multipart/form-data">
+        <input type="file" name="cv" accept=".pdf,.doc,.docx"><br>
+        <input type="submit" name="submit_cv" value="Uploader le CV"><br>
+    </form>
 
-
-$sql_get_cv = "SELECT cv FROM utilisateur WHERE username='$username'";
-$result_get_cv = $conn->query($sql_get_cv);
-if ($result_get_cv->num_rows > 0) {
-    $row_get_cv = $result_get_cv->fetch_assoc();
-    
-    if (!empty($row_get_cv['cv'])) {
-        
-        echo "<h2>Votre CV</h2>";
-        echo '<a href="' . $row_get_cv['cv'] . '" target="_blank">Voir le CV</a>';
-
-        echo '<form method="POST" action="">';
-        echo '<input type="hidden" name="username" value="' . $username . '">';
-        echo '<button type="submit" name="delete_cv">Supprimer le CV</button>';
-        echo '</form>';
-        echo'</div>';
+    <?php
+    // Afficher le CV actuel
+    $sql_get_cv = "SELECT cv FROM utilisateur WHERE username='$username'";
+    $result_get_cv = $conn->query($sql_get_cv);
+    if ($result_get_cv->num_rows > 0) {
+        $row_get_cv = $result_get_cv->fetch_assoc();
+        if (!empty($row_get_cv['cv'])) {
+            echo "<h2>Votre CV</h2>";
+            echo '<a href="' . $row_get_cv['cv'] . '" target="_blank">Voir le CV</a>';
+            // Formulaire pour supprimer le CV
+            echo '<form method="POST" action="">';
+            echo '<input type="hidden" name="username" value="' . $username . '">';
+            echo '<button type="submit" name="delete_cv">Supprimer le CV</button>';
+            echo '</form>';
+        } else {
+            echo "<p>Aucun CV disponible.</p>";
+        }
     } else {
         echo "<p>Aucun CV disponible.</p>";
     }
-} else {
-    echo "<p>Aucun CV disponible.</p>";
-}
+    ?>
 
-echo '</div>';
-echo '</section>';
+    <!-- Formulaire pour ajouter une étape de parcours -->
+    <h2>Ajouter une étape de parcours</h2>
+    <form action="" method="post">
+        <input type="text" name="titre" placeholder="Titre" required><br>
+        <textarea name="description" placeholder="Description du parcours" required></textarea><br>
+        <input type="date" name="date_debut" required><br>
+        <input type="date" name="date_fin" required><br>
+        <input type="submit" name="submit_parcours" value="Ajouter"><br>
+    </form>
 
-echo '<section class="right-column">';
-echo '<div class="post">';
-echo '<h2>Ajouter une étape de parcours</h2>';
-echo '<form action="" method="post">';
-    echo '<input type="text" name="titre" placeholder="Titre" required><br>';
-    echo '<textarea name="description" placeholder="Description du parcours" required></textarea><br>';
-    echo '<input type="date" name="date_debut" required><br>';
-    echo '<input type="date" name="date_fin" required><br>';
-    echo '<input type="submit" name="submit_parcours" value="Ajouter"><br>';
-echo '</form>';
-echo '</div>';
-echo '<div class="post">';
-$sql_parcours = "SELECT * FROM parcours WHERE username='$username' ORDER BY date_debut ASC";
-$result_parcours = $conn->query($sql_parcours);
-if ($result_parcours->num_rows > 0) {
-    echo "<h2>Parcours</h2>";
-    echo '<ul class="timeline">';
-    while ($row_parcours = $result_parcours->fetch_assoc()) {
-        echo '<li class="timeline-item">';
-        echo '<h3>' . $row_parcours['titre'] . '</h3>';
-        echo '<p>' . $row_parcours['description'] . '</p>';
-        echo '<span>' . $row_parcours['date_debut'] . ' - ' . $row_parcours['date_fin'] . '</span>';
-        echo '</li>';
+    <?php
+    // Récupérer et afficher la frise chronologique du parcours de l'utilisateur
+    $sql_parcours = "SELECT * FROM parcours WHERE username='$username' ORDER BY date_debut ASC";
+    $result_parcours = $conn->query($sql_parcours);
+    if ($result_parcours->num_rows > 0) {
+        echo "<h2>Parcours</h2>";
+        echo '<ul class="timeline">';
+        while ($row_parcours = $result_parcours->fetch_assoc()) {
+            echo '<li class="timeline-item">';
+            echo '<h3>' . $row_parcours['titre'] . '</h3>';
+            echo '<p>' . $row_parcours['description'] . '</p>';
+            echo '<span>' . $row_parcours['date_debut'] . ' - ' . $row_parcours['date_fin'] . '</span>';
+            echo '</li>';
+        }
+        echo '</ul>';
+    } else {
+        echo "<p>Aucun parcours disponible.</p>";
     }
-    echo '</ul>';
-} else {
-    echo "<p>Aucun parcours disponible.</p>";
-}
-echo '</div>';
-$username = $_SESSION['username'];
-$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, utilisateur.username, utilisateur.photoProfil 
-            FROM posts 
-            JOIN utilisateur ON posts.username = utilisateur.username 
-            WHERE utilisateur.username = '$username' 
-            ORDER BY posts.created_at DESC";
 
-$result_posts = $conn->query($sql_posts);
-if ($result_posts->num_rows > 0) {
-while ($row_post = $result_posts->fetch_assoc()) {
-    echo "<div class='post'>";
-    echo "<div class='post2'>";
-    echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
-    echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic2'>";
-    echo "</a>";
-
-    echo "<div class='post-content'>";
-    echo "<h3>".$row_post['username']."</h3>";
-    echo "<p>".$row_post['content']."</p>";
-    
-    $file_extension = pathinfo($row_post['media'], PATHINFO_EXTENSION);
-    $allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-    $allowed_video_extensions = ['mp4', 'webm', 'ogg'];
-    
-    if (in_array($file_extension, $allowed_image_extensions)) {
-        echo "<img src='".$row_post['media']."' alt='Image du post' style='max-width:100%;'>";
-    } elseif (in_array($file_extension, $allowed_video_extensions)) {
-        echo "<video controls style='max-width:100%;'>
-                <source src='".$row_post['media']."' type='video/mp4'>
-                Your browser does not support the video tag.
-                </video>";
+    // Récupérer et afficher les projets de l'utilisateur
+    $sql_projets = "SELECT * FROM projet WHERE username='$username' ORDER BY date_debut ASC";
+    $result_projets = $conn->query($sql_projets);
+    if ($result_projets->num_rows > 0) {
+        echo "<h2>Projets</h2>";
+        echo '<ul class="project-list">';
+        while ($row_projet = $result_projets->fetch_assoc()) {
+            echo '<li class="project-item">';
+            echo '<h3>' . $row_projet['titre'] . '</h3>';
+            echo '<p>' . $row_projet['description'] . '</p>';
+            echo '<span>' . $row_projet['date_debut'] . ' - ' . $row_projet['date_fin'] . '</span>';
+            echo '</li>';
+        }
+        echo '</ul>';
+    } else {
+        echo "<p>Aucun projet disponible.</p>";
     }
-    
-    echo "<span class='timestamp'>".$row_post['created_at']."</span>";
-    echo "<form method='POST' action=''>";
-    echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea><br>";
-    echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
-    echo "<button type='submit' name='submit_comment'>Commenter</button>";
-    echo "</form>";
+    ?>
 
-    // Afficher les commentaires
-    $id = $row_post['id'];
-    $sql_comments = "SELECT * FROM comments WHERE id = '$id' ORDER BY created_at DESC";
-    $result_comments = $conn->query($sql_comments);
+    <!-- Formulaire pour ajouter un projet -->
+    <h2>Ajouter un projet</h2>
+    <form action="" method="post">
+        <input type="text" name="titre_projet" placeholder="Titre du projet" required><br>
+        <textarea name="description_projet" placeholder="Description du projet" required></textarea><br>
+        <input type="date" name="date_debut_projet" required><br>
+        <input type="date" name="date_fin_projet" required><br>
+        <input type="submit" name="submit_projet" value="Ajouter"><br>
+    </form>
 
-    if ($result_comments->num_rows > 0) {
-        echo "<div class='comments'>";
-        while ($row_comment = $result_comments->fetch_assoc()) {
-            echo "<div class='comment'>";
-            echo "<p><strong>".$row_comment['username'].":</strong> ".$row_comment['content']."</p>";
+    <?php
+    // Récupérer et afficher les posts de l'utilisateur
+    $sql_posts = "SELECT * FROM posts WHERE username='$username' ORDER BY created_at DESC";
+    $result_posts = $conn->query($sql_posts);
+    if ($result_posts->num_rows > 0) {
+        echo "<h2>Vos Posts</h2>";
+        while ($row_post = $result_posts->fetch_assoc()) {
+            echo "<div class='post'>";
+            echo "<div class='post-content'>";
+            echo "<h3>" . $row_post['username'] . "</h3>";
+            echo "<p>" . $row_post['content'] . "</p>";
+            if (!empty($row_post['image'])) {
+                echo "<img src='" . $row_post['image'] . "' alt='Image du post' style='max-width:10%;'><br>";
+            }
+            echo "<span class='timestamp'>" . $row_post['created_at'] . "</span>";
+            // Formulaire pour supprimer le post
+            echo '<form method="POST" action="">';
+            echo '<input type="hidden" name="post_id" value="' . $row_post['id'] . '">';
+            echo '<button type="submit" name="delete_post">Supprimer</button>';
+            echo '</form>';
+            echo "</div>";
             echo "</div>";
         }
-        echo "</div>";
     } else {
-        echo "<p>Aucun commentaire.</p>";
+        echo "<p>Aucun post disponible.</p>";
     }
-    
-    echo "</div>"; // Fermeture de post-content
-    echo "</div>"; // Fermeture de post
-}
-} else {
-echo "<p>Aucun post disponible.</p>";
-}
-   
-echo "</div>";
-echo "</div>";
-?>
-
+    ?>
 </section>
-
 </body>
-<footer></footer>
 </html>
 
 <?php

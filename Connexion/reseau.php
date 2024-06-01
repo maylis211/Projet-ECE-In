@@ -30,6 +30,7 @@ if (isset($_GET['ami'])) {
         echo "Erreur lors de l'envoi de la demande d'ami: " . $conn->error;
     }
 }
+
 // Si le formulaire pour accepter une demande d'ami est soumis
 if (isset($_POST["accept_friend_request"])) {
     $request_id = $conn->real_escape_string($_POST['request_id']);
@@ -40,6 +41,19 @@ if (isset($_POST["accept_friend_request"])) {
         echo "Demande d'ami acceptée.";
     } else {
         echo "Erreur lors de l'acceptation de la demande d'ami: " . $conn->error;
+    }
+}
+
+// Si le formulaire pour rejeter une demande d'ami est soumis
+if (isset($_POST["reject_friend_request"])) {
+    $request_id = $conn->real_escape_string($_POST['request_id']);
+
+    // Supprimer la demande d'ami de la table friends
+    $sql_reject_request = "DELETE FROM friends WHERE id='$request_id'";
+    if ($conn->query($sql_reject_request) === TRUE) {
+        echo "Demande d'ami rejetée.";
+    } else {
+        echo "Erreur lors du rejet de la demande d'ami: " . $conn->error;
     }
 }
 
@@ -117,13 +131,38 @@ if ($result_amis) {
     echo "Erreur SQL: " . $conn->error;
 }
 
+// Récupération des amis des amis
+$sql_amis_des_amis = "
+    SELECT DISTINCT u.username, u.description, u.photoProfil
+    FROM utilisateur u
+    JOIN friends f1 ON u.username = f1.friend_name
+    JOIN friends f2 ON f1.username = f2.friend_name
+    WHERE f2.username = '$user_id' AND u.username != '$user_id'
+    AND u.username NOT IN (
+        SELECT f.friend_name FROM friends f WHERE f.username = '$user_id' AND f.status = 'accepted'
+        UNION
+        SELECT f.username FROM friends f WHERE f.friend_name = '$user_id' AND f.status = 'accepted'
+    )";
+
+$result_amis_des_amis = $conn->query($sql_amis_des_amis);
+$amis_des_amis = [];
+if ($result_amis_des_amis) {
+    if ($result_amis_des_amis->num_rows > 0) {
+        while ($row = $result_amis_des_amis->fetch_assoc()) {
+            $amis_des_amis[] = $row;
+        }
+    } else {
+        echo "Aucun ami des amis à ajouter.";
+    }
+} else {
+    echo "Erreur SQL: " . $conn->error;
+}
+
 // Affichage des demandes d'amis en attente
 $sql_pending_requests = "SELECT f.id, f.username 
         FROM friends f 
         WHERE f.friend_name = '$user_id' AND f.status='pending'";
 $result_pending_requests = $conn->query($sql_pending_requests);
-
-
 ?>
 
 <!DOCTYPE html>
@@ -184,8 +223,8 @@ $result_pending_requests = $conn->query($sql_pending_requests);
         <?php
         if (count($utilisateurs_non_amis) > 0) {
             foreach ($utilisateurs_non_amis as $utilisateur) {
-                echo '<div class="user">';
-                echo '<img src="' . $utilisateur['photoProfil'] . '" alt="Photo de profil de ' . $utilisateur['username'] . '" class="profile-pic">';
+                echo '<div class="friend">';
+                echo '<a href="profil.php?username=' . $utilisateur['username'] . '"><img src="' . $utilisateur['photoProfil'] . '" alt="Photo de profil de ' . $utilisateur['username'] . '" class="profile-pic"></a>';
                 echo '<p>' . $utilisateur['username'] . '</p>';
                 echo '<p>' . $utilisateur['description'] . '</p>';
                 echo '<a href="?ami=' . $utilisateur['username'] . '">Ajouter comme ami</a>';
@@ -202,7 +241,7 @@ $result_pending_requests = $conn->query($sql_pending_requests);
         if (count($amis) > 0) {
             foreach ($amis as $ami) {
                 echo '<div class="friend">';
-                echo '<img src="' . $ami['photoProfil'] . '" alt="Photo de profil de ' . $ami['username'] . '" class="profile-pic">';
+                echo '<a href="profil.php?username=' . $ami['username'] . '"><img src="' . $ami['photoProfil'] . '" alt="Photo de profil de ' . $ami['username'] . '" class="profile-pic"></a>';
                 echo '<p>' . $ami['username'] . '</p>';
                 echo '<p>' . $ami['description'] . '</p>';
                 echo '</div>';
@@ -210,11 +249,29 @@ $result_pending_requests = $conn->query($sql_pending_requests);
         } else {
             echo '<p>Vous n\'avez aucun ami.</p>';
         }
+        ?>
 
-$conn->close(); // Fermeture de la connexion
-
-?>
+        <!-- Afficher les amis des amis -->
+        <h2>Amis de mes amis</h2>
+        <?php
+        if (count($amis_des_amis) > 0) {
+            foreach ($amis_des_amis as $ami_ami) {
+                echo '<div class="friend">';
+                echo '<a href="profil.php?username=' . $ami_ami['username'] . '"><img src="' . $ami_ami['photoProfil'] . '" alt="Photo de profil de ' . $ami_ami['username'] . '" class="profile-pic"></a>';
+                echo '<p>' . $ami_ami['username'] . '</p>';
+                echo '<p>' . $ami_ami['description'] . '</p>';
+                echo '<a href="?ami=' . $ami_ami['username'] . '">Ajouter comme ami</a>';
+                echo '</div>';
+            }
+        } else {
+            echo '<p>Aucun ami des amis à ajouter.</p>';
+        }
+        ?>
 
     </main>
 </body>
 </html>
+
+<?php
+$conn->close(); // Fermeture de la connexion
+?>
