@@ -1,4 +1,3 @@
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -53,9 +52,15 @@ nav ul li a {
 }
 
 footer {
+    background-color: #076d79;
+    color: white;
     text-align: center;
-    padding: 20px;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }
+
 
 button {
     padding: 10px 20px;
@@ -77,8 +82,27 @@ button:hover {
     display: block;
     margin: 0 auto;
 }
-.user-profile {
-    text-align: center; /* Centrer les éléments */
+
+.profile-pic2 {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-left: 50px;
+}
+
+.post2 .profile-pic2 {
+    float: left;
+    margin-right: 10px;
+}
+
+.user-profil-photo{
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    text-align: center;
 }
 .user-profile form {
     margin-top: 20px; /* Ajouter de l'espace entre les éléments */
@@ -144,17 +168,50 @@ button:hover {
 -moz-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
 }
 
-/* vous.css */
-.user-profile {
-    width: 80%;
-    margin: 0 auto;
-}
+ 
 
 .profile-pic {
     width: 150px;
     height: 150px;
     border-radius: 50%;
 }
+
+.user-profile {
+    display: flex;
+    justify-content: space-between;
+}
+
+.container{
+    display: flex;
+    margin: 0 20px;
+}
+
+.left-column, .right-column {
+    flex: 1;
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    max-width: 650px;
+    text-align: center;
+}
+
+.right-column {
+    margin-left: 20px; /* Espace entre les deux colonnes */
+}
+
+
+.post{
+    margin: 20px auto;
+    max-width: 600px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+
 
 .friend {
     display: flex;
@@ -166,7 +223,7 @@ button:hover {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-left: 160px;
 }
 
 .friend p {
@@ -176,4 +233,15 @@ button:hover {
 
 .friend form {
     margin-left: auto;
+}
+
+
+footer {
+    background-color: #076d79;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
 }

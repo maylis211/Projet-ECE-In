@@ -74,6 +74,53 @@ if (isset($_POST['submit_comment'])) {
     }
 }
 
+// Si un like est soumis
+if (isset($_POST['like'])) {
+    $username = $_SESSION['username'];
+    // Récupérer l'ID du post à liker à partir des données de la requête AJAX
+    $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : '';
+
+    // Vérifier si $post_id est défini
+    if (!empty($post_id)) {
+        $sql_check_like = "SELECT * FROM post_likes WHERE post_id = '$post_id' AND username = '$username'";
+        $result_check_like = $conn->query($sql_check_like);
+
+        if ($result_check_like->num_rows == 0) {
+            $sql_insert_like = "INSERT INTO post_likes (post_id, username) VALUES ('$post_id', '$username')";
+            if ($conn->query($sql_insert_like) === TRUE) {
+                echo "Post liké avec succès.";
+            } else {
+                echo "Erreur lors du like du post: " . $conn->error;
+            }
+        } else {
+            echo "Vous avez déjà liké ce post.";
+        }
+    } else {
+        echo "L'ID du post n'est pas défini.";
+    }
+}
+
+
+// Si un partage est soumis
+if (isset($_POST['share'])) {
+    $username = $_SESSION['username'];
+    // Récupérer l'ID du post à partager à partir des données de la requête AJAX
+    $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : '';
+
+    // Vérifier si $post_id est défini
+    if (!empty($post_id)) {
+        $sql_insert_share = "INSERT INTO post_shares (post_id, username) VALUES ('$post_id', '$username')";
+        if ($conn->query($sql_insert_share) === TRUE) {
+            echo "Post partagé avec succès.";
+        } else {
+            echo "Erreur lors du partage du post: " . $conn->error;
+        }
+    } else {
+        echo "L'ID du post n'est pas défini.";
+    }
+}
+
+
 // Obtenir la date de début et de fin de la semaine actuelle
 $start_week = date("Y-m-d", strtotime('monday this week'));
 $end_week = date("Y-m-d", strtotime('sunday this week'));
@@ -198,12 +245,26 @@ $sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, uti
                                     Your browser does not support the video tag.
                                   </video>";
                         }
+                        
+
+
+                                // Ajouter les boutons de like et de share
+                        echo "<form action='' method='post'>";
+                        $post_id = $row_post['id'];
+                        echo "<input type='hidden' name='post_id' value='$post_id'>";
+                        echo "<button type='submit' name='like' class='like-button'>Like</button>";
+                        echo "<button type='submit' name='share' class='share-button'>Partager</button>";
+                        echo "</form>";
+
+                        
+
                         echo "<span class='timestamp'>".$row_post['created_at']."</span>";
                         echo "<form method='POST' action=''>";
                         echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
                         echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
                         echo "<button type='submit' name='submit_comment'>Commenter</button>";
                         echo "</form>";
+                       
 
                         // Afficher les commentaires
                         $id = $row_post['id'];

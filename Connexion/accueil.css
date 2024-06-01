@@ -42,6 +42,15 @@ header {
 .post-content {
     margin-left: 70px;
 }
+
+.post form {
+    display: flex;
+    align-items: center; /* Aligner les éléments verticalement au centre */
+}
+
+.post form button {
+    margin-right: 10px; /* Espace entre les boutons */
+}
 .post .profile-pic {
     float: left;
     margin-right: 10px;
@@ -264,6 +273,42 @@ main {
     display: block;
     margin: 0 auto;
 }
+
+button.like-button {
+    background-color: #ff2bdf;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.share-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.like-button,
+button.share-button {
+    display: inline-block;
+    margin-right: 10px; /* Espace entre les boutons */
+}
+
+
+button.like-button:hover {
+    background-color: #b929a6;
+}
+
+button.share-button:hover {
+    background-color: #217dbb;
+}
+
 
 
 footer {
