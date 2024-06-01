@@ -11,6 +11,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['username'])) {
     die("Vous devez être connecté pour accéder à cette page.");
@@ -42,6 +43,19 @@ if (isset($_POST["accept_friend_request"])) {
         echo "Erreur lors de l'acceptation de la demande d'ami: " . $conn->error;
     }
 }
+// Si le formulaire pour rejeter une demande d'ami est soumis
+if (isset($_POST["reject_friend_request"])) {
+    $request_id = $conn->real_escape_string($_POST['request_id']);
+
+    // Supprimer la demande d'ami de la table friends
+    $sql_reject_request = "DELETE FROM friends WHERE id='$request_id'";
+    if ($conn->query($sql_reject_request) === TRUE) {
+        echo "Demande d'ami rejetée.";
+    } else {
+        echo "Erreur lors du rejet de la demande d'ami: " . $conn->error;
+    }
+}
+
 
 // Si le formulaire pour envoyer une demande d'ami est soumis
 if (isset($_POST["send_friend_request"])) {
@@ -185,7 +199,7 @@ $result_pending_requests = $conn->query($sql_pending_requests);
         if (count($utilisateurs_non_amis) > 0) {
             foreach ($utilisateurs_non_amis as $utilisateur) {
                 echo '<div class="user">';
-                echo '<img src="' . $utilisateur['photoProfil'] . '" alt="Photo de profil de ' . $utilisateur['username'] . '" class="profile-pic">';
+                echo '<a href="profil.php?username=' . $utilisateur['username'] . '"><img src="' . $utilisateur['photoProfil'] . '" alt="Photo de profil de ' . $utilisateur['username'] . '" class="profile-pic"></a>';
                 echo '<p>' . $utilisateur['username'] . '</p>';
                 echo '<p>' . $utilisateur['description'] . '</p>';
                 echo '<a href="?ami=' . $utilisateur['username'] . '">Ajouter comme ami</a>';
@@ -202,7 +216,7 @@ $result_pending_requests = $conn->query($sql_pending_requests);
         if (count($amis) > 0) {
             foreach ($amis as $ami) {
                 echo '<div class="friend">';
-                echo '<img src="' . $ami['photoProfil'] . '" alt="Photo de profil de ' . $ami['username'] . '" class="profile-pic">';
+                echo '<a href="profil.php?username=' . $ami['username'] . '"><img src="' . $ami['photoProfil'] . '" alt="Photo de profil de ' . $ami['username'] . '" class="profile-pic"></a>';
                 echo '<p>' . $ami['username'] . '</p>';
                 echo '<p>' . $ami['description'] . '</p>';
                 echo '</div>';

@@ -11,8 +11,44 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
+$username = $_SESSION['username'];
+// Si le formulaire pour envoyer une demande d'ami est soumis
+if (isset($_POST["send_friend_request"])) {
+    $friend_username = $conn->real_escape_string($_POST['friend_username']);
+
+    // Vérifier si l'utilisateur essaie de s'envoyer une demande d'ami à lui-même
+    if ($friend_username === $username) {
+        echo "Vous ne pouvez pas vous envoyer une demande d'ami à vous-même.";
+    } else {
+        // Vérifier si l'utilisateur à ajouter existe
+        $sql_check_user = "SELECT username FROM utilisateur WHERE username='$friend_username'";
+        $result_check_user = $conn->query($sql_check_user);
+        if ($result_check_user->num_rows > 0) {
+            // Insérer la demande d'ami dans la table friends
+            $sql_send_request = "INSERT INTO friends (username, friend_name, status) VALUES ('$username', '$friend_username', 'pending')";
+            if ($conn->query($sql_send_request) === TRUE) {
+                echo "Demande d'ami envoyée avec succès.";
+            } else {
+                echo "Erreur lors de l'envoi de la demande d'ami: " . $conn->error;
+            }
+        } else {
+            echo "Utilisateur non trouvé.";
+        }
+    }
+}
+
+
 // Récupération des informations de l'utilisateur
 $user_id = $_GET['username']; // Assurez-vous que c'est sécurisé
+$sql_check_friendship = "SELECT * FROM friends WHERE (username = '$user_id' AND friend_name = '$user_id') OR (username = '$user_id' AND friend_name = '$user_id' AND status = 'accepted')";
+$result_check_friendship = $conn->query($sql_check_friendship);
+$is_friend = $result_check_friendship->num_rows > 0;
+
+$sql_check_public = "SELECT profil_public FROM utilisateur WHERE username = '$user_id'";
+$result_check_public = $conn->query($sql_check_public);
+$profil_public = $result_check_public->fetch_assoc()['profil_public'];
+
 $sql_user_info = "SELECT username, description, photoProfil, cv FROM utilisateur WHERE username = '$user_id'";
 $result_user_info = $conn->query($sql_user_info);
 if ($result_user_info->num_rows > 0) {
@@ -56,50 +92,26 @@ if ($result_user_posts->num_rows > 0) {
     </nav>
 </header>
 <main class="container">
-    <div class="profil-info">
+<div class="profil-info">
+    <?php if ($profil_public || $is_friend) : ?>
         <img src="<?php echo $user_info['photoProfil']; ?>" alt="<?php echo $user_info['username']; ?>" class="profile-pic">
         <h1><?php echo $user_info['username']; ?></h1>
         <p><?php echo $user_info['description']; ?></p>
-        
         <?php if (isset($cv_path)) : ?>
             <h2>CV<h2>
             <iframe src="<?php echo htmlspecialchars($cv_path); ?>" width="40%" height="700px" frameborder="0"></iframe>
         <?php endif; ?>
-    </div>
-    <div class="parcours">
-        <?php
-        // Récupérer et afficher la frise chronologique du parcours de l'utilisateur
-        $sql_parcours = "SELECT * FROM parcours WHERE username='$user_id' ORDER BY date_debut ASC";
-        $result_parcours = $conn->query($sql_parcours);
-        if ($result_parcours->num_rows > 0) {
-            echo "<h2>Parcours</h2>";
-            echo '<ul class="timeline">';
-            while($row_parcours = $result_parcours->fetch_assoc()) {
-                echo '<li class="timeline-item">';
-                echo '<h3>' . $row_parcours['titre'] . '</h3>';
-                echo '<p>' . $row_parcours['description'] . '</p>';
-                echo '<span>' . $row_parcours['date_debut'] . ' - ' . $row_parcours['date_fin'] . '</span>';
-                echo '</li>';
-            }
-            echo '</ul>';
-        } else {
-            echo "<p>Aucun parcours disponible.</p>";
-        }
-        ?>
-    </div>
-    <div class="user-posts">
-        <h2>Posts de <?php echo $user_info['username']; ?></h2>
-        <?php if (!empty($user_posts)): ?>
-            <?php foreach ($user_posts as $post): ?>
-                <div class="post">
-                    <p><?php echo $post['content']; ?></p>
-                    <span><?php echo $post['created_at']; ?></span>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>Aucun post disponible pour le moment.</p>
-        <?php endif; ?>
-    </div>
+    <?php else : ?>
+        <img src="<?php echo $user_info['photoProfil']; ?>" alt="<?php echo $user_info['username']; ?>" class="profile-pic">
+        <h1><?php echo $user_info['username']; ?></h1>
+        <p><?php echo $user_info['description']; ?></p>
+        <form action="" method="post">
+            <input type="hidden" name="friend_username" value="<?php echo $user_info['username']; ?>">
+            <input type="submit" name="send_friend_request" value="Ajouter comme ami">
+        </form>
+    <?php endif; ?>
+</div>
+
 </main>
 <footer>
     <p>&copy; 2024 ECE In. Tous droits réservés.</p>

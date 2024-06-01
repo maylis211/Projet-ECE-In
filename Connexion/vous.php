@@ -76,17 +76,6 @@ if (isset($_POST['delete_cv'])) {
         echo "Erreur lors de la suppression du CV: " . $conn->error;
     }
 }
-// Si le formulaire pour modifier les paramètres de confidentialité du profil est soumis
-if (isset($_POST['submit_privacy_settings'])) {
-    $profil_public = isset($_POST['profil_public']) ? 1 : 0; // 1 pour profil public, 0 pour profil privé
-    $username = $_SESSION['username'];
-    $sql_update_privacy_settings = "UPDATE utilisateur SET profil_public='$profil_public' WHERE username='$username'";
-    if ($conn->query($sql_update_privacy_settings) === TRUE) {
-        echo "Paramètres de confidentialité du profil mis à jour avec succès.";
-    } else {
-        echo "Erreur lors de la mise à jour des paramètres de confidentialité du profil: " . $conn->error;
-    }
-}
 
 
 // Si le formulaire pour ajouter une étape de parcours est soumis
