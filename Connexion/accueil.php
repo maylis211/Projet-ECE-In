@@ -77,10 +77,7 @@ if (isset($_POST['submit_comment'])) {
 // Si un like est soumis
 if (isset($_POST['like'])) {
     $username = $_SESSION['username'];
-    // Récupérer l'ID du post à liker à partir des données de la requête AJAX
     $post_id = isset($_POST['post_id']) ? $_POST['post_id'] : '';
-
-    // Vérifier si $post_id est défini
     if (!empty($post_id)) {
         $sql_check_like = "SELECT * FROM post_likes WHERE post_id = '$post_id' AND username = '$username'";
         $result_check_like = $conn->query($sql_check_like);
@@ -88,7 +85,13 @@ if (isset($_POST['like'])) {
         if ($result_check_like->num_rows == 0) {
             $sql_insert_like = "INSERT INTO post_likes (post_id, username) VALUES ('$post_id', '$username')";
             if ($conn->query($sql_insert_like) === TRUE) {
-                echo "Post liké avec succès.";
+                // Mettre à jour le compteur de likes dans la table posts
+                $sql_update_likes = "UPDATE posts SET like_count = like_count + 1 WHERE id = '$post_id'";
+                if ($conn->query($sql_update_likes) === TRUE) {
+                    echo "Post liké avec succès.";
+                } else {
+                    echo "Erreur lors de la mise à jour du compteur de likes: " . $conn->error;
+                }
             } else {
                 echo "Erreur lors du like du post: " . $conn->error;
             }
@@ -99,6 +102,8 @@ if (isset($_POST['like'])) {
         echo "L'ID du post n'est pas défini.";
     }
 }
+
+
 
 
 // Si un partage est soumis
@@ -163,8 +168,8 @@ if ($result_events->num_rows > 0) {
                 <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
                 <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
                 <li><div class="onglet"><a href="notifications.php">Notifications</a></div></li>
-                <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
-                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+                <li><div class="onglet"><a href="messagerie.php">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="emplois.php">Emplois</a></div></li>
             </ul>
         </nav>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -222,49 +227,49 @@ if ($result_events->num_rows > 0) {
                 <h2>Fil d'actualités</h2>
                 <?php
 $username = $_SESSION['username'];
-$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username WHERE (utilisateur.profil_public = 1 OR utilisateur.username = '$username' OR utilisateur.username IN (SELECT friend_name FROM friends WHERE username = '$username' AND status = 'accepted') OR utilisateur.username IN (SELECT username FROM friends WHERE friend_name = '$username' AND status = 'accepted')) ORDER BY posts.created_at DESC";
+$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, posts.like_count, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username WHERE (utilisateur.profil_public = 1 OR utilisateur.username = '$username' OR utilisateur.username IN (SELECT friend_name FROM friends WHERE username = '$username' AND status = 'accepted') OR utilisateur.username IN (SELECT username FROM friends WHERE friend_name = '$username' AND status = 'accepted')) ORDER BY posts.created_at DESC";
 
   $result_posts = $conn->query($sql_posts);
                 if ($result_posts->num_rows > 0) {
                     while ($row_post = $result_posts->fetch_assoc()) {
                         echo "<div class='post'>";
-                        echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
-                        echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
-                        echo "</a>";
-                        echo "<div class='post-content'>";
-                        echo "<h3>".$row_post['username']."</h3>";
-                        echo "<p>".$row_post['content']."</p>";
-                        $file_extension = pathinfo($row_post['media'], PATHINFO_EXTENSION);
-                        $allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-                        $allowed_video_extensions = ['mp4', 'webm', 'ogg'];
-                        if (in_array($file_extension, $allowed_image_extensions)) {
-                            echo "<img src='".$row_post['media']."' alt='Image du post' style='max-width:100%;'>";
-                        } elseif (in_array($file_extension, $allowed_video_extensions)) {
-                            echo "<video controls style='max-width:100%;'>
-                                    <source src='".$row_post['media']."' type='video/mp4'>
-                                    Your browser does not support the video tag.
-                                  </video>";
-                        }
-                        
+echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
+echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
+echo "</a>";
+echo "<div class='post-content'>";
+echo "<h3>".$row_post['username']."</h3>";
+echo "<p>".$row_post['content']."</p>";
+$file_extension = pathinfo($row_post['media'], PATHINFO_EXTENSION);
+$allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+$allowed_video_extensions = ['mp4', 'webm', 'ogg'];
+if (in_array($file_extension, $allowed_image_extensions)) {
+    echo "<img src='".$row_post['media']."' alt='Image du post' style='max-width:100%;'>";
+} elseif (in_array($file_extension, $allowed_video_extensions)) {
+    echo "<video controls style='max-width:100%;'>
+            <source src='".$row_post['media']."' type='video/mp4'>
+            Your browser does not support the video tag.
+          </video>";
+}
+
+// Ajouter les boutons de like et de share
+echo "<form action='' method='post'>";
+$post_id = $row_post['id'];
+echo "<input type='hidden' name='post_id' value='$post_id'>";
+echo "<button type='submit' name='like' class='like-button'>Like</button>";
+echo "<span class='like-count'>Likes: ".$row_post['like_count']."</span>";
+echo "<button type='submit' name='share' class='share-button'>Partager</button>";
+echo "</form>";
 
 
-                                // Ajouter les boutons de like et de share
-                        echo "<form action='' method='post'>";
-                        $post_id = $row_post['id'];
-                        echo "<input type='hidden' name='post_id' value='$post_id'>";
-                        echo "<button type='submit' name='like' class='like-button'>Like</button>";
-                        echo "<button type='submit' name='share' class='share-button'>Partager</button>";
-                        echo "</form>";
+echo "<span class='timestamp'>".$row_post['created_at']."</span>";
+echo "<form method='POST' action=''>";
+echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
+echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
+echo "<button type='submit' name='submit_comment'>Commenter</button>";
+echo "</form>";
 
-                        
 
-                        echo "<span class='timestamp'>".$row_post['created_at']."</span>";
-                        echo "<form method='POST' action=''>";
-                        echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
-                        echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
-                        echo "<button type='submit' name='submit_comment'>Commenter</button>";
-                        echo "</form>";
-                       
+ 
 
                         // Afficher les commentaires
                         $id = $row_post['id'];
