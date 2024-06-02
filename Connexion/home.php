@@ -144,6 +144,96 @@ nav ul li a {
     text-decoration: none;
     font-size: 16px;
 }
+.friend-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #088897;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.friend-button:hover {
+    background-color: #056672;
+}
+        #wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome {
+            margin-bottom: 20px;
+        }
+
+        .friend-list {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .friend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .friend-item a {
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        .friend-item a:hover {
+            color: #088897;
+        }
+
+        .create-group {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .create-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .create-group input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #088897;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .create-group input[type="submit"]:hover {
+            background-color: #056672;
+        }
+
+        .logout-link {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #fff;
+            color: #333;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .logout-link:hover {
+            background-color: #f0f0f0;
+        }
+
 
     /* ... (Autres styles spécifiques ici) ... */
 </style>
@@ -159,8 +249,8 @@ nav ul li a {
                 <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
                 <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
                 <li><div class="onglet"><a href="notifications.php">Notifications</a></div></li>
-                <li><div class="ongletSelect"><a href="messagerie.html">Messagerie</a></div></li>
-                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+                <li><div class="ongletSelect"><a href="home.php">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="emplois.php">Emplois</a></div></li>
             </ul>
         </nav>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -173,22 +263,19 @@ nav ul li a {
         <div id="wrapper">
             <div id="menu">
                 <p class="welcome">Bienvenue, <b><?php echo htmlspecialchars($username); ?></b></p>
-                <form action="" method="post">
-                    <input type="submit" name="logout" value="Déconnexion">
-                </form>
+
             </div>
             <div class="friend-list">
                 <h2>Vos amis</h2>
                 <?php foreach ($friends as $friend): ?>
                     <div class="friend-item">
-                        <!-- Lien vers la page de chat individuelle -->
-                        <a href="chat.php?friend=<?php echo urlencode($friend['friend_name']); ?>">
+                        <!-- Bouton pour la conversation avec l'ami -->
+                        <a href="chat.php?friend=<?php echo urlencode($friend['friend_name']); ?>" class="friend-button">
                             <?php echo htmlspecialchars($friend['friend_name']); ?>
                         </a>
                     </div>
                 <?php endforeach; ?>
             </div>
-            
             <!-- Formulaire pour créer un groupe de discussion -->
             <div class="create-group">
                 <h2>Créer un groupe</h2>
