@@ -238,80 +238,80 @@ if ($result_events->num_rows > 0) {
             <section class="feed">
                 <h2>Fil d'actualités</h2>
                 <?php
-$username = $_SESSION['username'];
-$sql_posts = "SELECT posts.id, posts.lieu, posts.heure,posts.content, posts.created_at, posts.media, posts.like_count, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username WHERE (utilisateur.profil_public = 1 OR utilisateur.username = '$username' OR utilisateur.username IN (SELECT friend_name FROM friends WHERE username = '$username' AND status = 'accepted') OR utilisateur.username IN (SELECT username FROM friends WHERE friend_name = '$username' AND status = 'accepted')) ORDER BY posts.created_at DESC";
+    $username = $_SESSION['username'];
+    $sql_posts = "SELECT posts.id, posts.lieu, posts.heure, posts.content, posts.created_at, posts.media, posts.like_count, utilisateur.username, utilisateur.photoProfil, utilisateur.mood_image FROM posts JOIN utilisateur ON posts.username = utilisateur.username WHERE (utilisateur.profil_public = 1 OR utilisateur.username = '$username' OR utilisateur.username IN (SELECT friend_name FROM friends WHERE username = '$username' AND status = 'accepted') OR utilisateur.username IN (SELECT username FROM friends WHERE friend_name = '$username' AND status = 'accepted')) ORDER BY posts.created_at DESC";
 
   $result_posts = $conn->query($sql_posts);
-                if ($result_posts->num_rows > 0) {
-                    while ($row_post = $result_posts->fetch_assoc()) {
-                        echo "<div class='post'>";
-echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
-echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
-echo "</a>";
-echo "<div class='post-content'>";
-echo "<h3>".$row_post['username']."</h3>";
-echo "<p>".$row_post['content']."</p>";
-$file_extension = pathinfo($row_post['media'], PATHINFO_EXTENSION);
-$allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-$allowed_video_extensions = ['mp4', 'webm', 'ogg'];
-if (in_array($file_extension, $allowed_image_extensions)) {
-    echo "<img src='".$row_post['media']."' alt='Image du post' style='max-width:100%;'>";
-} elseif (in_array($file_extension, $allowed_video_extensions)) {
-    echo "<video controls style='max-width:100%;'>
-            <source src='".$row_post['media']."' type='video/mp4'>
-            Your browser does not support the video tag.
-          </video>";
+  if ($result_posts->num_rows > 0) {
+    while ($row_post = $result_posts->fetch_assoc()) {
+        echo "<div class='post'>";
+        echo "<div class='profile-container'>";
+        echo "<a href='profil.php?username=" . $row_post['username'] . "'>";
+        echo "<img src='".$row_post['photoProfil']."' alt='Photo de profil' class='profile-pic'>";
+        echo "</a>";
+        echo "<img src='".$row_post['mood_image']."' alt='Image d\'humeur' class='mood-pic'>";
+        echo "</div>";
+        echo "<div class='post-content'>";
+        echo "<h3>".$row_post['username']."</h3>";
+        echo "<p>".$row_post['content']."</p>";
+        $file_extension = pathinfo($row_post['media'], PATHINFO_EXTENSION);
+        $allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+        $allowed_video_extensions = ['mp4', 'webm', 'ogg'];
+        if (in_array($file_extension, $allowed_image_extensions)) {
+            echo "<img src='".$row_post['media']."' alt='Image du post' style='max-width:100%;'>";
+        } elseif (in_array($file_extension, $allowed_video_extensions)) {
+            echo "<video controls style='max-width:100%;'>
+                    <source src='".$row_post['media']."' type='video/mp4'>
+                    Your browser does not support the video tag.
+                  </video>";
+        }
+        if (isset($row_post['lieu']) && !empty($row_post['lieu'])) {
+            echo "<p><i>Lieu :</i> " . $row_post['lieu'] . "</p>";
+        }
+
+        if (isset($row_post['heure']) && !empty($row_post['heure']) && $row_post['heure'] !== '00:00:00') {
+            echo "<p><i>Heure :</i> " . $row_post['heure'] . "</p>";
+        }
+
+        // Ajouter les boutons de like et de share
+        echo "<form action='' method='post'>";
+        $post_id = $row_post['id'];
+        echo "<input type='hidden' name='post_id' value='$post_id'>";
+        echo "<button type='submit' name='like' class='like-button'>Like</button>";
+        echo "<span class='like-count'>Likes: ".$row_post['like_count']."</span>";
+        echo "<button type='submit' name='share' class='share-button'>Partager</button>";
+        echo "</form>";
+
+        echo "<span class='timestamp'>".$row_post['created_at']."</span>";
+        echo "<form method='POST' action=''>";
+        echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
+        echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
+        echo "<button type='submit' name='submit_comment'>Commenter</button>";
+        echo "</form>";
+
+        // Afficher les commentaires
+        $id = $row_post['id'];
+        $sql_comments = "SELECT * FROM comments WHERE id = '$id' ORDER BY created_at DESC";
+        $result_comments = $conn->query($sql_comments);
+
+        if ($result_comments->num_rows > 0) {
+            echo "<div class='comments'>";
+            while ($row_comment = $result_comments->fetch_assoc()) {
+                echo "<div class='comment'>";
+                echo "<p><strong>".$row_comment['username'].":</strong> ".$row_comment['content']."</p>";
+                echo "</div>";
+            }
+            echo "</div>";
+        } else {
+            echo "<p>Aucun commentaire.</p>";
+        }
+        echo "</div>"; // Fermeture de post-content
+        echo "</div>"; // Fermeture de post
+    }
+} else {
+    echo "<p>Aucun post disponible.</p>";
 }
-if (isset($row_post['lieu']) && !empty($row_post['lieu'])) {
-    echo "<p><i>Lieu :</i> " . $row_post['lieu'] . "</p>";
-}
 
-if (isset($row_post['heure']) && !empty($row_post['heure']) && $row_post['heure'] !== '00:00:00') {
-    echo "<p><i>Heure :</i> " . $row_post['heure'] . "</p>";
-}
-
-// Ajouter les boutons de like et de share
-echo "<form action='' method='post'>";
-$post_id = $row_post['id'];
-echo "<input type='hidden' name='post_id' value='$post_id'>";
-echo "<button type='submit' name='like' class='like-button'>Like</button>";
-echo "<span class='like-count'>Likes: ".$row_post['like_count']."</span>";
-echo "<button type='submit' name='share' class='share-button'>Partager</button>";
-echo "</form>";
-
-
-echo "<span class='timestamp'>".$row_post['created_at']."</span>";
-echo "<form method='POST' action=''>";
-echo "<textarea name='comment_content' placeholder='Ajouter un commentaire...' required></textarea>";
-echo "<input type='hidden' name='id' value='".$row_post['id']."'>";
-echo "<button type='submit' name='submit_comment'>Commenter</button>";
-echo "</form>";
-
-
- 
-
-                        // Afficher les commentaires
-                        $id = $row_post['id'];
-                        $sql_comments = "SELECT * FROM comments WHERE id = '$id' ORDER BY created_at DESC";
-                        $result_comments = $conn->query($sql_comments);
-
-                        if ($result_comments->num_rows > 0) {
-                            echo "<div class='comments'>";
-                            while ($row_comment = $result_comments->fetch_assoc()) {
-                                echo "<div class='comment'>";
-                                echo "<p><strong>".$row_comment['username'].":</strong> ".$row_comment['content']."</p>";
-                                echo "</div>";
-                            }
-                            echo "</div>";
-                        } else {
-                            echo "<p>Aucun commentaire.</p>";
-                        }
-                        echo "</div>"; // Fermeture de post-content
-                        echo "</div>"; // Fermeture de post
-                    }
-                } else {
-                    echo "<p>Aucun post disponible.</p>";
-                }
                 ?>
             </section>
             <section class="contact">

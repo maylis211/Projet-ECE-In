@@ -176,6 +176,36 @@ if (isset($_POST["remove_friend"])) {
         echo "Erreur lors de la suppression de l'ami: " . $conn->error;
     }
 }
+if (isset($_POST['submit_mood'])) {
+    // Vérifiez si $_SESSION['username'] est définie
+    if (isset($_SESSION['username'])) {
+        $username = $_SESSION['username'];
+        $selected_mood = $conn->real_escape_string($_POST['mood']);
+        
+        // Requête pour obtenir le chemin de l'image associée à l'humeur sélectionnée
+        $sql_select_image = "SELECT image_path FROM mood_images WHERE mood='$selected_mood'";
+        $result_image = $conn->query($sql_select_image);
+        
+        if ($result_image->num_rows > 0) {
+            $row_image = $result_image->fetch_assoc();
+            $image_path = $row_image['image_path'];
+            
+            // Enregistrez l'association d'humeur dans la base de données pour cet utilisateur
+            $sql_update_mood = "UPDATE utilisateur SET mood_image='$image_path' WHERE username='$username'";
+            if ($conn->query($sql_update_mood) === TRUE) {
+                echo "Humeur mise à jour avec succès.";
+            } else {
+                echo "Erreur lors de la mise à jour de l'humeur: " . $conn->error;
+            }
+        } else {
+            echo "Aucune image n'a été trouvée pour cette humeur.";
+        }
+    } else {
+        echo "Erreur : utilisateur non authentifié.";
+    }
+}
+
+
 if (isset($_POST["generate_xml"])) {
     $username = $_SESSION['username'];
     $xml_file = "cv_xml/" . $username . "_cv.xml";
@@ -294,18 +324,31 @@ if (isset($_SESSION['username'])) {
     if ($result_user->num_rows > 0) {
         $row_user = $result_user->fetch_assoc();
         echo "<h1>" . $row_user['username'] . "</h1>";
+        echo '<div class="profile-container">';
         echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
+        echo '<img src="' . $row_user['mood_image'] . '" alt="Image d\'humeur" class="mood-pic">';
+        echo '</div>';
         echo '<p>' . $row_user['description'] . '</p>';
+        echo '<form action="" method="post">';
+        echo '<select name="mood">';
+        echo '<option value="Heureux">Heureux</option>';
+        echo '<option value="Triste">Triste</option>';
+        echo '<option value="Endormi">Endormi</option>';
+        echo '<option value="Au travail">Au travail</option>';
+        echo '</select>';
+        echo '<input type="submit" name="submit_mood" value="Changer d\'humeur">';
+        echo '</form>';
+
         // Formulaire pour uploader une nouvelle photo de profil
         echo '<h4>Changer de photo de profil</h4>';
         echo '<form action="" method="post" enctype="multipart/form-data">';
         echo '<input type="file" name="photo" accept="image/*"><br>';
         echo '<input type="submit" name="submit" value="Valider"><br>';
         echo '</form>';
-        
     }
 }
-        ?>
+?>
+</section>
         </section>
         <div class="container">
         <section class="left-column">
@@ -330,8 +373,8 @@ echo '</section>';
 
 echo '<h2>Paramètres de confidentialité du profil</h2>';
 echo '<form action="" method="post">';
-echo '<input type="checkbox" name="profil_public" id="profil_public">';
-if ($row_user['profil_public'] == 1) echo '<checked>'; 
+echo '<input type="checkbox" name="profil_public" id="profil_public" ' . ($row_user['profil_public'] == 1 ? 'checked' : '') . '>';
+ 
 echo '<label for="profil_public">Profil public</label><br>';
 echo '<input type="submit" name="submit_privacy_settings" value="Enregistrer"><br>';
 echo '</form>';
