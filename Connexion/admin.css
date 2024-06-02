@@ -15,8 +15,38 @@ header h1 {
     padding: 10px 20px;;
 }
 
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-info {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin: 0 auto;
+}
+
+.admin-info h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.admin-info img {
+    display: block;
+    margin: 0 auto; /* Cette ligne centre l'image horizontalement */
+    border-radius: 50%;
+    margin-bottom: 10px;
+    max-width: 100px; /* Spécifie une largeur maximale pour l'image */
+}
 
 
+.admin-info p {
+    margin: 5px 0;
+    text-align: center;
+}
 
 
 .gestion-utilisateurs {

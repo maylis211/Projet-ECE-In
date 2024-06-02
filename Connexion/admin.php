@@ -20,6 +20,15 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+// Récupérer les informations de l'administrateur
+$sql = "SELECT * FROM utilisateur WHERE role = 'administrateur' LIMIT 1";
+$result = $conn->query($sql);
+
+$adminInfo = null;
+if ($result->num_rows > 0) {
+    $adminInfo = $result->fetch_assoc();
+}
+
 // Ajouter un utilisateur
 if (isset($_POST['add_user'])) {
     $username = $_POST['username'];
@@ -64,6 +73,14 @@ $conn->close();
     </header>
     <div class="container">
         <main>
+            <div class="admin-info">
+                <?php if ($adminInfo) : ?>
+                    <h2>Informations de l'administrateur</h2>
+                    <img src="<?php echo $adminInfo['photoProfil']; ?>" alt="Photo de profil de l'administrateur">
+                    <p>Nom d'utilisateur : <?php echo $adminInfo['username']; ?></p>
+                    <!-- Ajoutez d'autres informations de l'administrateur si nécessaire -->
+                <?php endif; ?>
+            </div>
             <div class="gestion-utilisateurs">
                 <h2>Ajouter un utilisateur</h2>
                 <form action="admin.php" method="POST">
