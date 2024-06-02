@@ -44,6 +44,51 @@ if (isset($_POST["submit"])) {
         echo "Le fichier n'est pas une image.";
     }
 }
+if (isset($_POST["generate_xml"])) {
+    $username = $_SESSION['username'];
+    
+    // Récupérer les informations de l'utilisateur depuis la base de données
+    $sql_user = "SELECT * FROM utilisateur WHERE username='$username'";
+    $result_user = $conn->query($sql_user);
+    $row_user = $result_user->fetch_assoc();
+    
+    $sql_experience = "SELECT * FROM parcours WHERE username='$username'";
+    $result_experience = $conn->query($sql_experience);
+    
+    $sql_education = "SELECT * FROM projet WHERE username='$username'";
+    $result_education = $conn->query($sql_education);
+
+    // Commencer à construire le fichier XML
+    $xml = new SimpleXMLElement('<cv/>');
+    $user_xml = $xml->addChild('utilisateur');
+    $user_xml->addChild('username', $row_user['username']);
+    $user_xml->addChild('email', $row_user['email']);
+    
+    $experiences_xml = $user_xml->addChild('parcours');
+    while ($row_experience = $result_experience->fetch_assoc()) {
+        $experience_xml = $experiences_xml->addChild('experience');
+        $experience_xml->addChild('titre', $row_experience['titre']);
+        $experience_xml->addChild('date_debut', $row_experience['date_debut']);
+        $experience_xml->addChild('date_fin', $row_experience['date_fin']);
+        $experience_xml->addChild('description', $row_experience['description']);
+    }
+
+    $education_xml = $user_xml->addChild('projets');
+    while ($row_education = $result_education->fetch_assoc()) {
+        $education_entry_xml = $education_xml->addChild('entry');
+        $education_entry_xml->addChild('titre', $row_education['titre']);
+        $education_entry_xml->addChild('date_debut', $row_education['date_debut']);
+        $education_entry_xml->addChild('date_fin', $row_education['date_fin']);
+        $education_entry_xml->addChild('description', $row_education['description']);
+    }
+
+    // Sauvegarder le fichier XML sur le serveur
+    $xml_file = "cv_xml/" . $username . "_cv.xml";
+    $xml->asXML($xml_file);
+
+    // Afficher un lien vers le fichier XML
+    echo "Fichier XML généré avec succès. <a href='$xml_file' target='_blank'>Télécharger le fichier XML</a>";
+}
 
 // Si le formulaire pour uploader un CV est soumis
 if (isset($_POST["submit_cv"])) {
@@ -129,6 +174,76 @@ if (isset($_POST["remove_friend"])) {
         echo "Erreur lors de la suppression de l'ami: " . $conn->error;
     }
 }
+if (isset($_POST["generate_xml"])) {
+    $username = $_SESSION['username'];
+    $xml_file = "cv_xml/" . $username . "_cv.xml";
+    
+    if (file_exists($xml_file)) {
+        $xml = simplexml_load_file($xml_file);
+        
+        $html = '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV de ' . $xml->utilisateur->username . '</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 80%; margin: 0 auto; }
+        h1, h2 { color: #333; }
+        .section { margin-bottom: 20px; }
+        .section h2 { border-bottom: 2px solid #333; padding-bottom: 5px; }
+        .experience, .projet { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CV de ' . $xml->utilisateur->username . '</h1>
+        <div class="section">
+            <h2>Informations Personnelles</h2>
+            <p><strong>Nom d\'utilisateur:</strong> ' . $xml->utilisateur->username . '</p>
+            <p><strong>Email:</strong> ' . $xml->utilisateur->email . '</p>
+            <p><strong>Description:</strong> ' . $xml->utilisateur->description . '</p>
+        </div>
+        <div class="section">
+            <h2>Parcours</h2>';
+
+        foreach ($xml->utilisateur->parcours->experience as $experience) {
+            $html .= '<div class="experience">
+                <h3>' . $experience->titre . '</h3>
+                <p><strong>Date de début:</strong> ' . $experience->date_debut . '</p>
+                <p><strong>Date de fin:</strong> ' . $experience->date_fin . '</p>
+                <p>' . $experience->description . '</p>
+            </div>';
+        }
+
+        $html .= '</div>
+        <div class="section">
+            <h2>Projets</h2>';
+
+        foreach ($xml->utilisateur->projets->entry as $projet) {
+            $html .= '<div class="projet">
+                <h3>' . $projet->titre . '</h3>
+                <p><strong>Date de début:</strong> ' . $projet->date_debut . '</p>
+                <p><strong>Date de fin:</strong> ' . $projet->date_fin . '</p>
+                <p>' . $projet->description . '</p>
+            </div>';
+        }
+
+        $html .= '</div>
+    </div>
+</body>
+</html>';
+
+        $html_file = "cv_html/" . $username . "_cv.html";
+        file_put_contents($html_file, $html);
+
+        echo "Fichier HTML généré avec succès. <a href='$html_file' target='_blank'>Voir le fichier HTML</a>";
+    } else {
+        echo "Le fichier XML n'existe pas.";
+    }
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -233,6 +348,10 @@ if ($result_friends->num_rows > 0) {
 echo '</div>';
 echo '<div class="post">';
 echo '<h2>Ajouter votre CV</h2>';
+echo'<form action="" method="post">';
+    echo'<input type="submit" name="generate_xml" value="Générer le fichier XML"><br>';
+echo'</form>';
+
 echo '<form action="" method="post" enctype="multipart/form-data">';
     echo '<input type="file" name="cv" accept=".pdf,.doc,.docx"><br>';
     echo '<input type="submit" name="submit_cv" value="Uploader le CV"><br>';
