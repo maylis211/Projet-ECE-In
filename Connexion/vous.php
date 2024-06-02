@@ -88,8 +88,6 @@ if (isset($_POST["generate_xml"])) {
     $xml_file = "cv_xml/" . $username . "_cv.xml";
     $xml->asXML($xml_file);
 
-    // Afficher un lien vers le fichier XML
-    echo "Fichier XML généré avec succès. <a href='$xml_file' target='_blank'>Télécharger le fichier XML</a>";
 }
 
 // Si le formulaire pour uploader un CV est soumis
@@ -406,38 +404,14 @@ if ($result_friends->num_rows > 0) {
 }
 echo '</div>';
 echo '<div class="post">';
-echo '<h2>Ajouter votre CV</h2>';
+echo '<h2>Téléchargez votre CV</h2>';
 echo'<form action="" method="post">';
-    echo'<input type="submit" name="generate_xml" value="Générer le fichier XML"><br>';
+    echo'<input type="submit" name="generate_xml" value="Générer le CV"><br>';
 echo'</form>';
 
-echo '<form action="" method="post" enctype="multipart/form-data">';
-    echo '<input type="file" name="cv" accept=".pdf,.doc,.docx"><br>';
-    echo '<input type="submit" name="submit_cv" value="Uploader le CV"><br>';
-echo '</form>';
 
 
-$sql_get_cv = "SELECT cv FROM utilisateur WHERE username='$username'";
-$result_get_cv = $conn->query($sql_get_cv);
-if ($result_get_cv->num_rows > 0) {
-    $row_get_cv = $result_get_cv->fetch_assoc();
-    
-    if (!empty($row_get_cv['cv'])) {
-        
-        echo "<h2>Votre CV</h2>";
-        echo '<a href="' . $row_get_cv['cv'] . '" target="_blank">Voir le CV</a>';
 
-        echo '<form method="POST" action="">';
-        echo '<input type="hidden" name="username" value="' . $username . '">';
-        echo '<button type="submit" name="delete_cv">Supprimer le CV</button>';
-        echo '</form>';
-        echo'</div>';
-    } else {
-        echo "<p>Aucun CV disponible.</p>";
-    }
-} else {
-    echo "<p>Aucun CV disponible.</p>";
-}
 
 echo '</div>';
 echo '</section>';
