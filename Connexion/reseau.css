@@ -106,3 +106,12 @@ main {
         margin-bottom: 20px;
     
 }
+
+footer {
+    background-color: #076d79;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+    bottom: 0;
+}

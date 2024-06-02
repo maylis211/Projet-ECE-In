@@ -112,4 +112,7 @@ $conn->close();
         </main>
     </div>
 </body>
+<footer>
+    <p>&copy; 2024 ECE In. Tous droits réservés.</p>
+</footer>
 </html>
