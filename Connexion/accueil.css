@@ -190,9 +190,9 @@ main {
     background-color: #f4f4f4;
     border-radius: 10px;
     margin-top: 20px;
-    width: 80%; /* Ajustez la largeur selon vos besoins */
+    width: 90%; /* Ajustez la largeur selon vos besoins */
     margin: 0 auto; /* Utiliser cette propriété pour centrer horizontalement */
-    max-width: 800px; /* Ajouter une largeur maximale pour éviter que la section ne s'étire trop sur de grands écrans */
+    max-width: 1000px; /* Ajouter une largeur maximale pour éviter que la section ne s'étire trop sur de grands écrans */
 }
 
 
@@ -316,7 +316,6 @@ footer {
     color: white;
     text-align: center;
     padding: 10px 0;
-    position: fixed;
     width: 100%;
     bottom: 0;
 }
