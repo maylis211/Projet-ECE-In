@@ -38,7 +38,7 @@ if ($conn->connect_error) {
                 <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
                 <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
                 <li><div class="ongletSelect"><a href="notifications.php">Notifications</a></div></li>
-                <li><div class="onglet"><a href="home.php">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="messagerie.php">Messagerie</a></div></li>
                 <li><div class="onglet"><a href="emplois.php">Emplois</a></div></li>
             </ul>
         </nav>

@@ -90,7 +90,7 @@ if (isset($_POST['logout'])) {
 <head>
     <meta charset="UTF-8">
     <title>Chat Application</title>
-    <link rel="stylesheet" href="messagerie.css">
+    <link rel="stylesheet" href="Messagerie.css">
 
 </head>
 <body>
