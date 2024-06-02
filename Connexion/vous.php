@@ -15,7 +15,7 @@ if ($conn->connect_error) {
 if (isset($_POST['submit_description'])) {
     $descriptionU = $conn->real_escape_string($_POST['descriptionU']);
     $username = $_SESSION['username'];
-    $sql_update_description = "UPDATE utilisateur SET descriptionU='$descriptionU' WHERE username='$username'";
+    $sql_update_description = "UPDATE utilisateur SET description='$descriptionU' WHERE username='$username'";
     if ($conn->query($sql_update_description) === TRUE) {
         echo "Description mise à jour avec succès.";
     } else {
@@ -294,7 +294,7 @@ if ($result_parcours->num_rows > 0) {
 }
 echo '</div>';
 $username = $_SESSION['username'];
-$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, utilisateur.username, utilisateur.photoProfil 
+$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, utilisateur.username, utilisateur.photoProfil
             FROM posts 
             JOIN utilisateur ON posts.username = utilisateur.username 
             WHERE utilisateur.username = '$username' 
