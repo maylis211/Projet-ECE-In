@@ -209,7 +209,7 @@ if ($result_events->num_rows > 0) {
                 ?>
                 <form method="POST" action="" enctype="multipart/form-data">
                     <textarea name="content" placeholder="Quoi de neuf ?" required></textarea>
-                    <input type="file" name="media" accept="image/*,video/*">
+                    <input type="file" name="media" accept="image/,video/">
                     <div class="event-container">
                         <label for="is_event">Événement :</label>
                         <input type="checkbox" id="is_event" name="is_event" onchange="toggleEventDates()">
