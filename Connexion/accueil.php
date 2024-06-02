@@ -27,11 +27,14 @@ if (isset($_POST['submit'])) {
     $media_path = '';
 
     // Vérifier si un fichier a été téléchargé
-    if (isset($_FILES['media']) && $_FILES['media']['error'] === UPLOAD_ERR_OK) {
+    if (isset($_FILES['media']) /*&& $_FILES['media']['error'] === UPLOAD_ERR_OK*/) {
+        error_log("before pathinfo");
         $file_extension = pathinfo($_FILES['media']['name'], PATHINFO_EXTENSION);
+        error_log("after pathinfo");
         $allowed_image_extensions = ['jpg', 'jpeg', 'png', 'gif'];
         $allowed_video_extensions = ['mp4', 'webm', 'ogg'];
 
+        error_log("before test extension");
         if (in_array($file_extension, $allowed_image_extensions)) {
             $target_dir = "uploads/images/";
         } elseif (in_array($file_extension, $allowed_video_extensions)) {
@@ -46,7 +49,7 @@ if (isset($_POST['submit'])) {
             // Enregistrez le chemin du fichier dans la base de données
             $media_path = $target_file;
         } else {
-            echo "Erreur lors du téléchargement du fichier.";
+            echo "Erreur lors du téléchargement du fichier. ";
             exit;
         }
     }
@@ -232,7 +235,9 @@ if ($result_events->num_rows > 0) {
                         <label for="date_fin">Date de fin :</label>
                         <input type="date" id="date_fin" name="date_fin">
                     </div>
+                    
                     <button type="submit" name="submit">Publier</button>
+
                 </form>
             </section>
             <section class="feed">
@@ -269,9 +274,9 @@ if ($result_events->num_rows > 0) {
             echo "<p><i>Lieu :</i> " . $row_post['lieu'] . "</p>";
         }
 
-        if (isset($row_post['heure']) && !empty($row_post['heure']) && $row_post['heure'] !== '00:00:00') {
-            echo "<p><i>Heure :</i> " . $row_post['heure'] . "</p>";
-        }
+if (isset($row_post['heure']) && !empty($row_post['heure']) && $row_post['heure'] !== '00:00:00') {
+    echo "<p><i>Heure :</i> " . $row_post['heure'] . "</p>";
+}
 
         // Ajouter les boutons de like et de share
         echo "<form action='' method='post'>";
@@ -314,19 +319,23 @@ if ($result_events->num_rows > 0) {
 
                 ?>
             </section>
-            <section class="contact">
-                <h2>Nous contacter</h2>
-                <p>Vous pouvez nous contacter par les moyens suivants :</p>
-                <ul>
-                    <li><a href="mailto:admin@ecein.com">Email: admin@ecein.com</a></li>
-                    <li>Téléphone: +33 1 23 45 67 89</li>
-                    <li>Adresse: 10 Rue Sextius Michel, 75015 Paris, France</li>
-                </ul>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.816863599406!2d2.2914572156740104!3d48.83747107928404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e67161ec115303%3A0x20b44f189d292990!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1622003223999!" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-            </section>
+            
+
         </div>
     </div>
 </main>
+<footer>
+<section class="contact">
+    <h2>Nous contacter</h2>
+    <p>Vous pouvez nous contacter par les moyens suivants :</p>
+    <ul>
+        <li><a href="mailto:admin@ecein.com">Email: admin@ecein.com</a></li>
+        <li>Téléphone: +33 1 23 45 67 89</li>
+        <li>Adresse: 10 Rue Sextius Michel, 75015 Paris, France</li>
+    </ul>
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2625.816863599406!2d2.2914572156740104!3d48.83747107928404!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e67161ec115303%3A0x20b44f189d292990!2s10%20Rue%20Sextius%20Michel%2C%2075015%20Paris%2C%20France!5e0!3m2!1sen!2sus!4v1622003223999!" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+</section>
+    </footer>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script src="accueil.js"></script>
