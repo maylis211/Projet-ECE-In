@@ -1,0 +1,94 @@
+.container {
+    width: 50%;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+header h1 {
+    text-align: center;
+    background-color: #076d79;
+    color: white;
+    width: 100%;
+    padding: 10px 20px;;
+}
+
+.container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-info {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+    margin: 0 auto;
+}
+
+.admin-info h2 {
+    margin-top: 0;
+    text-align: center;
+}
+
+.admin-info img {
+    display: block;
+    margin: 0 auto; /* Cette ligne centre l'image horizontalement */
+    border-radius: 50%;
+    margin-bottom: 10px;
+    max-width: 100px; /* Spécifie une largeur maximale pour l'image */
+}
+
+
+.admin-info p {
+    margin: 5px 0;
+    text-align: center;
+}
+
+
+.gestion-utilisateurs {
+    margin-top: 20px;
+}
+
+.gestion-utilisateurs h2 {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+input[type="text"], input[type="password"], input[type="email"], select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input[type="submit"] {
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+}
+
+input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+.btn-delete {
+    background-color: #f44336 !important;
+}
+
+.btn-delete:hover {
+    background-color: #e53935 !important;
+}
