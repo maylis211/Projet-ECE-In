@@ -19,13 +19,11 @@ if ($conn->connect_error) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications</title>
-    <link rel="stylesheet" href="notifications.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<script src="notifications.js"></script>
-
+    
 </head>
 <body>
     <header>
@@ -38,8 +36,8 @@ if ($conn->connect_error) {
                 <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
                 <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
                 <li><div class="ongletSelect"><a href="notifications.php">Notifications</a></div></li>
-                <li><div class="onglet"><a href="messagerie.php">Messagerie</a></div></li>
-                <li><div class="onglet"><a href="emplois.php">Emplois</a></div></li>
+                <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
             </ul>
         </nav>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
