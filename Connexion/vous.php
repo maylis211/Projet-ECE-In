@@ -245,6 +245,18 @@ if (isset($_POST["generate_xml"])) {
 }
 
 
+// Si le formulaire pour supprimer un post est soumis
+if (isset($_POST['delete_post'])) {
+    $post_id = $conn->real_escape_string($_POST['post_id']);
+    $sql_delete_post = "DELETE FROM posts WHERE id='$post_id'";
+    if ($conn->query($sql_delete_post) === TRUE) {
+        echo "Post supprimé avec succès.";
+    } else {
+        echo "Erreur lors de la suppression du post: " . $conn->error;
+    }
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -280,6 +292,7 @@ if (isset($_SESSION['username'])) {
         $row_user = $result_user->fetch_assoc();
         echo "<h1>" . $row_user['username'] . "</h1>";
         echo '<img src="' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic">';
+        echo '<p>' . $row_user['description'] . '</p>';
         // Formulaire pour uploader une nouvelle photo de profil
         echo '<h4>Changer de photo de profil</h4>';
         echo '<form action="" method="post" enctype="multipart/form-data">';
@@ -468,6 +481,12 @@ while ($row_post = $result_posts->fetch_assoc()) {
     } else {
         echo "<p>Aucun commentaire.</p>";
     }
+    
+     // Ajout du bouton de suppression du post
+     echo "<form method='POST' action=''>";
+     echo "<input type='hidden' name='post_id' value='".$row_post['id']."'>";
+     echo "<button type='submit' name='delete_post'>Supprimer le post</button>";
+     echo "</form>";
     
     echo "</div>"; // Fermeture de post-content
     echo "</div>"; // Fermeture de post
