@@ -63,6 +63,8 @@ if (isset($_POST["generate_xml"])) {
     $user_xml = $xml->addChild('utilisateur');
     $user_xml->addChild('username', $row_user['username']);
     $user_xml->addChild('email', $row_user['email']);
+    $user_xml->addChild('photoProfil', $row_user['photoProfil']);
+
     
     $experiences_xml = $user_xml->addChild('parcours');
     while ($row_experience = $result_experience->fetch_assoc()) {
@@ -199,6 +201,7 @@ if (isset($_POST["generate_xml"])) {
 <body>
     <div class="container">
         <h1>CV de ' . $xml->utilisateur->username . '</h1>
+        <img src="../' . $row_user['photoProfil'] . '" alt="Photo de profil" class="profile-pic" width="100" height="100">
         <div class="section">
             <h2>Informations Personnelles</h2>
             <p><strong>Nom d\'utilisateur:</strong> ' . $xml->utilisateur->username . '</p>

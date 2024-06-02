@@ -11,6 +11,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
+
 // Si le formulaire de création de post est soumis
 if (isset($_POST['submit'])) {
     $username = $_SESSION['username'];
@@ -50,8 +51,12 @@ if (isset($_POST['submit'])) {
         }
     }
 
+    $lieu = isset($_POST['lieu']) ? $conn->real_escape_string($_POST['lieu']) : NULL;
+    $heure = isset($_POST['heure']) ? $conn->real_escape_string($_POST['heure']) : NULL;
+    
+
     // Insérer le post avec ou sans média et avec ou sans dates d'événement
-    $sql_insert_post = "INSERT INTO posts (username, content, is_event, date_debut, date_fin, media) VALUES ('$username', '$content', '$is_event', '$date_debut', '$date_fin', '$media_path')";
+    $sql_insert_post = "INSERT INTO posts (username, content, is_event, date_debut, date_fin, lieu, heure, media) VALUES ('$username', '$content', '$is_event', '$date_debut', '$date_fin', '$lieu', '$heure', '$media_path')";
     if ($conn->query($sql_insert_post) === TRUE) {
         echo "Post créé avec succès.";
     } else {
@@ -140,6 +145,7 @@ if ($result_events->num_rows > 0) {
         $events[] = $row_event;
     }
 }
+
 ?>
 
 
@@ -210,6 +216,12 @@ if ($result_events->num_rows > 0) {
                 <form method="POST" action="" enctype="multipart/form-data">
                     <textarea name="content" placeholder="Quoi de neuf ?" required></textarea>
                     <input type="file" name="media" accept="image/,video/">
+                    <label for="lieu">Lieu :</label>
+<input type="text" id="lieu" name="lieu">
+
+<label for="heure">Heure :</label>
+<input type="time" id="heure" name="heure">
+
                     <div class="event-container">
                         <label for="is_event">Événement :</label>
                         <input type="checkbox" id="is_event" name="is_event" onchange="toggleEventDates()">
@@ -227,7 +239,7 @@ if ($result_events->num_rows > 0) {
                 <h2>Fil d'actualités</h2>
                 <?php
 $username = $_SESSION['username'];
-$sql_posts = "SELECT posts.id, posts.content, posts.created_at, posts.media, posts.like_count, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username WHERE (utilisateur.profil_public = 1 OR utilisateur.username = '$username' OR utilisateur.username IN (SELECT friend_name FROM friends WHERE username = '$username' AND status = 'accepted') OR utilisateur.username IN (SELECT username FROM friends WHERE friend_name = '$username' AND status = 'accepted')) ORDER BY posts.created_at DESC";
+$sql_posts = "SELECT posts.id, posts.lieu, posts.heure,posts.content, posts.created_at, posts.media, posts.like_count, utilisateur.username, utilisateur.photoProfil FROM posts JOIN utilisateur ON posts.username = utilisateur.username WHERE (utilisateur.profil_public = 1 OR utilisateur.username = '$username' OR utilisateur.username IN (SELECT friend_name FROM friends WHERE username = '$username' AND status = 'accepted') OR utilisateur.username IN (SELECT username FROM friends WHERE friend_name = '$username' AND status = 'accepted')) ORDER BY posts.created_at DESC";
 
   $result_posts = $conn->query($sql_posts);
                 if ($result_posts->num_rows > 0) {
@@ -249,6 +261,13 @@ if (in_array($file_extension, $allowed_image_extensions)) {
             <source src='".$row_post['media']."' type='video/mp4'>
             Your browser does not support the video tag.
           </video>";
+}
+if (isset($row_post['lieu']) && !empty($row_post['lieu'])) {
+    echo "<p><i>Lieu :</i> " . $row_post['lieu'] . "</p>";
+}
+
+if (isset($row_post['heure']) && !empty($row_post['heure']) && $row_post['heure'] !== '00:00:00') {
+    echo "<p><i>Heure :</i> " . $row_post['heure'] . "</p>";
 }
 
 // Ajouter les boutons de like et de share
