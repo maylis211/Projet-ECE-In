@@ -185,7 +185,7 @@ $result_pending_requests = $conn->query($sql_pending_requests);
             <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
             <li><div class="onglet"><a href="notifications.php">Notifications</a></div></li>
             <li><div class="onglet"><a href="messagerie.php">Messagerie</a></div></li>
-            <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+            <li><div class="onglet"><a href="emplois.php">Emplois</a></div></li>
         </ul>
     </nav>
     </header>
@@ -270,6 +270,9 @@ $result_pending_requests = $conn->query($sql_pending_requests);
 
     </main>
 </body>
+<footer>
+    <p>&copy; 2024 ECE In. Tous droits réservés.</p>
+</footer>
 </html>
 
 <?php

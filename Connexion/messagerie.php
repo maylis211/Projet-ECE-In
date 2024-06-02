@@ -90,133 +90,8 @@ if (isset($_POST['logout'])) {
 <head>
     <meta charset="UTF-8">
     <title>Chat Application</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        * { margin: 0; padding: 0; }
-        body { margin: 20px auto; font-family: "Lato"; font-weight: 300; }
-        form { padding: 15px 25px; display: flex; gap: 10px; justify-content: center; }
-        form label { font-size: 1.5rem; font-weight: bold; }
-        input, textarea { font-family: "Lato"; }
-        a { color: #0000ff; text-decoration: none; }
-        .logo img {
-    height: 50px; /* Ajustez la taille du logo selon vos besoins */
-}
-        a:hover { text-decoration: underline; }
-        #wrapper, #loginform { margin: 0 auto; padding-bottom: 25px; background: linear-gradient(90deg, rgba(7,109,121,1) 0%, rgba(9,152,169,1) 98%);; width: 600px; max-width: 100%; border: 2px solid #212121; border-radius: 4px; }
-        #loginform { padding-top: 18px; text-align: center; }
-        #loginform p { padding: 15px 25px; font-size: 1.4rem; font-weight: bold; }
-        #chatbox { text-align: left; margin: 0 auto; margin-bottom: 25px; padding: 10px; background: white; height: 400px; width: 530px; border: 1px solid #a7a7a7; overflow: auto; border-radius: 4px; border-bottom: 4px solid #a7a7a7; }
-        #usermsg { flex: 1; border-radius: 4px; border: 1px solid #ff9800;background-color:#eee; }
-        #name { border-radius: 4px; border: 1px solid #ff9800; padding: 2px 8px; }
-        #submitmsg, #enter { background: #ff9800; border: 2px solid #e65100; color: white; padding: 4px 10px; font-weight: bold; border-radius: 4px; }
-        .error { color: #ff0000; }
-        #menu { padding: 15px 25px; display: flex; }
-        #menu p.welcome { flex: 1; }
-        a#exit { color: white; background: #c62828; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
-        .msgln { margin: 0 0 5px 0; }
-        .msgln span.left-info { color: orangered; }
-        .msgln span.chat-time { color: #666; font-size: 60%; vertical-align: super; }
-        .msgln b.user-name, .msgln b.user-name-left { font-weight: bold; background: #546e7a; color: white; padding: 2px 4px; font-size: 90%; border-radius: 4px; margin: 0 5px 0 0; }
-        .msgln b.user-name-left { background: orangered; }
-                .onglet {
-    padding: 8px 12px;
-    margin: 0 5px;
-    border-radius: 5px;
-    transition: background-color 0.3s, border-bottom 0.3s;
-}
-        header {
-    background: linear-gradient(90deg, rgba(7,109,121,1) 0%, rgba(9,152,169,1) 98%);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    margin-bottom: 30px;
-}
-    .chat-bubble {
-        padding: 10px;
-        border-radius: 10px;
-        max-width: 70%;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
+    <link rel="stylesheet" href="messagerie.css">
 
-    .user-message {
-        background-color: lightgray; /* Couleur verte pour les messages de l'utilisateur */
-        color: #006600;
-        margin-left: auto;
-        text-align: right;
-    }
-
-    .friend-message {
-        background-color: darkblue; /* Couleur grise pour les messages des amis */
-        color: white;
-        margin-right: auto;
-        text-align: left;
-    }
-
-    .chat-time {
-        font-size: 1.0em;
-        color: #888;
-        margin-top: 5px;
-    }
-
-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: flex-end;
-}
-nav ul li {
-    margin: 0 15px;
-}
-
-
-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-}
-.onglet:hover {
-    box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
-    -webkit-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
-    -moz-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;}
-
-.ongletSelect {
-    font-weight: bold; /* Met en gras le texte de l'onglet */
-    color: #088897; /* Change la couleur du texte de l'onglet */
-    border-bottom: 2px solid #088897; /* Ajoute une bordure en bas de l'onglet */
-    background-color: #088897; /* Ajoute un arrière-plan gris clair */
-    border-radius: 5px; /* Arrondit les coins de l'onglet */
-    padding: 8px 12px; /* Ajoute de l'espace à l'intérieur de l'onglet */
-    margin: 0 5px; /* Ajoute un espace entre les onglets */
-    box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
-    -webkit-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
-    -moz-box-shadow: 12px 12px 72px -23px rgba(41,49,56,0.9) inset;
-    transition: background-color 0.3s; /* Ajoute une transition fluide lors du survol */
-    
-}
-p.welcome {
-    font-size: 1.2rem; /* Vous pouvez augmenter cette valeur pour agrandir le texte */
-}
-
-p.welcome b {
-    font-size: 1.5rem; /* Vous pouvez augmenter cette valeur pour agrandir le nom d'utilisateur */
-}
-#chatbox {
-    margin-bottom: 15px; /* Vous pouvez réduire cette valeur pour diminuer l'espace */
-}
-label[for="friend_name"] {
-    font-size: 0.9rem; /* Vous pouvez diminuer cette valeur pour réduire le texte */
-}
-
-select#friend_name {
-    font-size: 0.9rem; /* Vous pouvez diminuer cette valeur pour réduire le texte */
-    padding: 2px; /* Vous pouvez réduire le padding pour diminuer la taille du champ */
-}
-
-    </style>
 </head>
 <body>
     <header>
@@ -229,8 +104,8 @@ select#friend_name {
                 <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
                 <li><div class="onglet"><a href="vous.php">Vous</a></div></li>
                 <li><div class="onglet"><a href="notifications.php">Notifications</a></div></li>
-                <li><div class="ongletSelect"><a href="messagerie.html">Messagerie</a></div></li>
-                <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+                <li><div class="ongletSelect"><a href="messagerie.php">Messagerie</a></div></li>
+                <li><div class="onglet"><a href="emplois.php">Emplois</a></div></li>
             </ul>
         </nav>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">

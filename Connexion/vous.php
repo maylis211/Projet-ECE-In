@@ -308,8 +308,8 @@ if (isset($_POST['delete_post'])) {
             <li><div class="onglet"><a href="reseau.php">Mon Réseau</a></div></li>
             <li><div class="ongletSelect"><a href="vous.php">Vous</a></div></li>
             <li><div class="onglet"><a href="notifications.php">Notifications</a></div></li>
-            <li><div class="onglet"><a href="messagerie.html">Messagerie</a></div></li>
-            <li><div class="onglet"><a href="emplois.html">Emplois</a></div></li>
+            <li><div class="onglet"><a href="messagerie.php">Messagerie</a></div></li>
+            <li><div class="onglet"><a href="emplois.php">Emplois</a></div></li>
         </ul>
     </nav>
 </header>
@@ -522,7 +522,9 @@ echo "</div>";
 </section>
 
 </body>
-<footer></footer>
+<footer>
+    <p>&copy; 2024 ECE In. Tous droits réservés.</p>
+</footer>
 </html>
 
 <?php
