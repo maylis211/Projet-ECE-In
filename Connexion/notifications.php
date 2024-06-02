@@ -1,4 +1,19 @@
-<!DOCTYPE html>
+   
+
+<?php
+//L'utilisateur est sur sa session
+session_start();
+// Connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "projet";
+$conn = new mysqli($servername, $username, $password, $dbname);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -34,9 +49,10 @@
 <div class="container text-center">
     <div class="button-container sticky-top">
         <div class="btn-group" role="group" aria-label="Basic example">
-            <button type="button" onclick="showEvents()" class="onlget">Evenements</button>
-            <button type="button" onclick="showFriendPosts()" class="onglet">Posts des Amis</button>
-            <button type="button" onclick="showOffresEmplois()" class="onglet">Offres     d'Emplois</button>
+            <button type="button" onclick="showEvents()" class="onglet">Événements</button>
+            <button type="button" onclick="showFriendPosts()" class="onglet">Abonnements</button>
+            <button type="button" onclick="showFriendsOfFriends()" class="onglet">Recommandations</button>
+            <button type="button" onclick="showPartners()" class="onglet">Partenaires</button>
         </div>
     </div>
     <div class="feed-container">
@@ -80,91 +96,207 @@
             </ul>
         </div>
         <div id="friendPostsSection" class="section" style="display: none;">
-            <h2 class="section-title">Posts des Amis</h2>
+            <h2 class="section-title">Feed de vos amis</h2>
             <ul class="feed">
+               <?php
+                    // Connexion à la base de données
+                    $servername = "localhost";
+                    $username = "root";
+                    $password = "";
+                    $dbname = "projet";
 
-                 <?php
+                    // Créer une connexion
+                    $conn = new mysqli($servername, $username, $password, $dbname);
 
-
-
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "projet";
-
-                $conn = new mysqli($servername, $username, $password, $dbname);
-
-                if ($conn->connect_error) {
-                    die("Échec de la connexion à la base de données: " . $conn->connect_error);
-                }
-
-                $sql = "SELECT * FROM parcours ORDER BY date_debut DESC";
-                $result = $conn->query($sql);
-
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<div class='feed-item'>";
-                        echo "<div class='content'>";
-                        echo "<h2 class='creator'>" . $row["username"] . "</h2>"; // Nom de l'utilisateur
-                        echo "<p><strong>Titre:</strong> " . $row["titre"] . "</p>"; // Titre du parcours
-                        echo "<p><strong>Description:</strong> " . $row["description"] . "</p>"; // Description du parcours
-                        echo "<p><strong>Date de début:</strong> " . $row["date_debut"] . "</p>"; // Date de début du parcours
-                        echo "<p><strong>Date de fin:</strong> " . $row["date_fin"] . "</p>"; // Date de fin du parcours
-                        echo "</div>";
-                        echo "</div>";
-                        echo "<hr>";
+                    // Vérifier la connexion
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
                     }
-                } else {
-                    echo "Aucun résultat trouvé.";
-                }
 
-            $conn->close();
-            ?>
-            </ul>   
+                    // Vérifier si l'utilisateur est connecté
+                    if (isset($_SESSION['username'])) {
+                        $username = $_SESSION['username']; // Utilisateur connecté
+
+                        // Requête pour récupérer les événements des amis de l'utilisateur, triés par date décroissante
+                        $sql = "SELECT e.NomEvent, e.Date, e.Image, e.Description, e.status, e.Utilisateur FROM evenements e 
+                                JOIN friends f ON e.Utilisateur = f.friend_name
+                                WHERE f.username = '$username' AND f.status = 'accepted'
+                                UNION
+                                SELECT e.NomEvent, e.Date, e.Image, e.Description, e.status, e.Utilisateur FROM evenements e
+                                JOIN friends f ON e.Utilisateur = f.username
+                                WHERE f.friend_name = '$username' AND f.status = 'accepted'
+                                ORDER BY DATE DESC";
+                            
+
+                        // Exécuter la requête
+                        $result = $conn->query($sql);
+
+                        // Afficher les événements si des résultats sont disponibles
+                        if ($result->num_rows > 0) {
+                            while($row = $result->fetch_assoc()) {
+                                $nomEvent = htmlspecialchars($row['NomEvent'] ?? '');
+                                $dateEvent = htmlspecialchars($row['Date'] ?? '');
+                                $description = htmlspecialchars($row['Description'] ?? '');
+                                $status = htmlspecialchars($row['status'] ?? '');
+                                $image = $row['Image'] ? htmlspecialchars($row['Image']) : 'noimage.jpg'; // Utiliser une image par défaut si aucune n'est spécifiée
+                                $utilisateur = $row['Utilisateur'] ?? ''; // Utilisateur créateur
+
+                                echo "<div class='feed-item'>";
+                                echo "<div class='content'>";
+                                echo "<div class='info-container'>";
+                                echo "<h2 class='creator'>" . htmlspecialchars($utilisateur) . "</h2>"; // Utilisateur créateur à gauche
+                                echo "<span class='date'>" . $dateEvent . "</span>"; // Date à droite
+                                echo "</div>";
+                                echo "<h3>" . $nomEvent . "</h3>";
+                                echo "<p>" . $description . "</p>";
+                                echo "<div class='image'><img src='images/$image' alt='Image de l'événement'></div>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "<hr>";
+                            }
+                        } else {
+                            echo "<p>Aucun événement trouvé pour les amis de " . htmlspecialchars($username) . "</p>";
+                        }
+                    } else {
+                        echo "<p>Veuillez vous connecter pour voir les événements de vos amis.</p>";
+                    }
+
+                    // Fermer la connexion à la base de données
+                    $conn->close();
+                    ?>
+                                </ul>   
         </div>
-        <div id="offresEmploisSection" class="section" style="display: none;">
-    <h2 class="section-title">Offres d'Emplois</h2>
-    <ul class="feed">
-        <?php
-        // Connexion à la base de données
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "projet";
-        $conn = new mysqli($servername, $username, $password, $dbname);
+        <div id="friendsOfFriendsSection" class="section" style="display: none;">
+                <h2 class="section-title">Feed des amis de vos Amis</h2>
+                <ul class="feed">
+                    <?php
+                    $servername = "localhost";
+                    $username = "root";
+                    $password = "";
+                    $dbname = "projet";
 
-        if ($conn->connect_error) {
-            die("Échec de la connexion à la base de données: " . $conn->connect_error);
-        }
 
-        // Requête pour sélectionner les offres d'emplois
-        $sql = "SELECT * FROM offres ORDER BY date_publication DESC";
-        $result = $conn->query($sql);
+                    // Connexion à la base de données (les détails de connexion doivent être définis ci-dessus)
+                    $conn = new mysqli($servername, $username, $password, $dbname);
 
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo "<div class='feed-item'>";
-                echo "<div class='content'>";
-                echo "<h2 class='creator'>" . $row["employeur"] . "</h2>"; // Employeur
-                echo "<h3>" . $row["titre"] . "</h3>"; // Titre de l'offre
-                echo "<p><strong>Description:</strong> " . $row["description"] . "</p>"; // Description
-                echo "<p><strong>Type:</strong> " . $row["type"] . "</p>"; // Type de contrat
-                echo "<p><strong>Localisation:</strong> " . $row["localisation"] . "</p>"; // Localisation
-                echo "<p><strong>Date de publication:</strong> " . $row["date_publication"] . "</p>"; // Date de publication
-                echo "<p><strong>Rémunération:</strong> " . $row["remuneration"] . "</p>"; // Rémunération
-                echo "<p><strong>Contact:</strong> " . $row["contact_email"] . "</p>"; // Contact
-                echo "</div>";
-                echo "</div>";
-                echo "<hr>";
-            }
-        } else {
-            echo "Aucune offre d'emploi trouvée.";
-        }
+                    // Vérifier la connexion
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
 
-        $conn->close();
-        ?>
-    </ul>
-</div>
+                    // Vérifier si l'utilisateur est connecté
+                    if (isset($_SESSION['username'])) {
+                        $username = $_SESSION['username']; // Utilisateur connecté
+
+                        // Requête pour récupérer les événements des amis d'amis de l'utilisateur connecté
+                        $sql = "SELECT e.NomEvent, e.Date, e.Image, e.Description, e.status, e.Utilisateur
+                                FROM evenements e
+                                JOIN friends f1 ON e.Utilisateur = f1.friend_name
+                                JOIN friends f2 ON f1.username = f2.friend_name
+                                WHERE f2.username = ? AND f1.status = 'accepted' AND f2.status = 'accepted'
+                                AND f1.friend_name NOT IN (SELECT friend_name FROM friends WHERE username = ? AND status = 'accepted')
+                                AND f1.friend_name != ?
+                                 ORDER BY e.Date DESC";
+
+
+                        // Préparer la requête
+                        $stmt = $conn->prepare($sql);
+                        // Lier les paramètres
+                        $stmt->bind_param("sss", $username, $username, $username);
+                        // Exécuter la requête
+                        $stmt->execute();
+                        // Récupérer le résultat
+                        $result = $stmt->get_result();
+
+                        if ($result->num_rows > 0) {
+                            echo "<ul>";
+                            while($row = $result->fetch_assoc()) {
+                                $nomEvent = htmlspecialchars($row['NomEvent']);
+                                $dateEvent = htmlspecialchars($row['Date']);
+                                $description = htmlspecialchars($row['Description']);
+                                $status = htmlspecialchars($row['status']);
+                                $image = $row['Image'] ? htmlspecialchars($row['Image']) : 'noimage.jpg'; // Utiliser une image par défaut si aucune n'est spécifiée
+                                $utilisateur = htmlspecialchars($row['Utilisateur']); // Utilisateur créateur
+
+                                echo "<div class='feed-item'>";
+                                echo "<div class='content'>";
+                                echo "<div class='info-container'>";
+                                echo "<h2 class='creator'>$utilisateur</h2>"; // Utilisateur créateur à gauche
+                                echo "<span class='date'>$dateEvent</span>"; // Date à droite
+                                echo "</div>";
+                                echo "<h3>$nomEvent</h3>";
+                                echo "<p>$description</p>";
+                                echo "<div class='image'><img src='images/$image' alt='Image de l'événement'></div>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "<hr>";
+                            }
+                            echo "</ul>";
+                        } else {
+                            echo "<p>Aucun événement trouvé pour les amis d'amis de " . htmlspecialchars($username) . "</p>";
+                        }
+
+                        // Fermer le statement
+                        $stmt->close();
+                    } else {
+                        echo "<p>Veuillez vous connecter pour voir les événements de vos amis.</p>";
+                    }
+
+                    // Fermer la connexion
+                    $conn->close();
+                    ?>
+ 
+                </ul>
+            </div>
+            <!-- Ajoutez la section des Partenaires -->
+            <div id="partnersSection" class="section" style="display: none;">
+                <h2 class="section-title">Partenaires</h2>
+                <ul class="feed">
+                    <?php
+                    // Connexion à la base de données
+                    $servername = "localhost";
+                    $username = "root";
+                    $password = "";
+                    $dbname = "projet";
+
+                    // Créer une connexion
+                    $conn = new mysqli($servername, $username, $password, $dbname);
+
+                    // Vérifier la connexion
+                    if ($conn->connect_error) {
+                        die("Connection failed: " . $conn->connect_error);
+                    }
+
+                    // Requête pour sélectionner les partenaires
+                    $sql = "SELECT * FROM `evenements` WHERE `status` = 'partenaire' ORDER BY `Date` DESC";
+                    $result = $conn->query($sql);
+
+                    // Afficher les partenaires
+                    if ($result->num_rows > 0) {
+                        while($row = $result->fetch_assoc()) {
+                            echo "<div class='feed-item'>";
+                            echo "<div class='content'>";
+                            echo "<div class='info-container'>";
+                            echo "<h2 class='creator'>" . htmlspecialchars($row["Utilisateur"]) . "</h2>";
+                            echo "<span class='date'>" . htmlspecialchars($row["Date"]) . "</span>";
+                            echo "</div>";
+                            echo "<h3>" . htmlspecialchars($row["NomEvent"]) . "</h3>";
+                            echo "<p>" . htmlspecialchars($row["Description"]) . "</p>";
+                            echo "<div class='image'><img src='" . htmlspecialchars($row["Image"]) . "' alt='Image de l'événement'></div>";
+                            echo "</div>";
+                            echo "</div>";
+                            echo "<hr>";
+                        }
+                    } else {
+                        echo "<p>Aucun partenaire trouvé.</p>";
+                    }
+
+                    // Fermer la connexion
+                    $conn->close();
+                    ?>
+                </ul>
+            </div>
+
     </div>
 </div>
 
